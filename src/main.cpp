@@ -20,6 +20,9 @@
 #define GW_WINDOW_WIDTH    800
 #define GW_WINDOW_HEIGHT   600
 #define GW_WINDOW_TITLE    "Geometry Wars"
+#define GW_MIN_TIMESTEP    0.000001
+#define GW_MAX_TIMESTEP    0.25
+#define GW_SIM_TIMESTEP    1.0 / 120.0
 
 /*///////////////////////
 //   Local Functions   //
@@ -60,6 +63,42 @@ static void gl_arb_debug(
     fprintf(stdout, "ARB_debug: %s\n", message);
 }
 #endif
+
+/// @summary Executes all of the logic associated with game user input. This
+/// is also where we would run user interface logic. Runs once per application tick.
+/// @param currentTime The current absolute time, in seconds. This represents
+/// the time at which the current tick started.
+/// @param elapsedTime The time elapsed since the previous tick, in seconds.
+static void input(double currentTime, double elapsedTime)
+{
+    UNUSED_ARG(currentTime);
+    UNUSED_ARG(elapsedTime);
+}
+
+/// @summary Executes a single game simulation tick to move all game entities.
+/// Runs zero or more times per application tick at a fixed timestep.
+/// @param currentTime The current absolute simulation time, in seconds. This
+/// represents the time at which the current simulation tick started.
+/// @param elapsedTime The time elapsed since the previous tick, in seconds.
+static void simulate(double currentTime, double elapsedTime)
+{
+    UNUSED_ARG(currentTime);
+    UNUSED_ARG(elapsedTime);
+}
+
+/// @summary Submits a single frame to the GPU for rendering. Runs once per
+/// application tick at a variable timestep.
+/// @param currentTime The current absolute time, in seconds. This represents
+/// the time at which the current tick started.
+/// @param elapsedTime The time elapsed since the previous tick, in seconds.
+/// @param t A value in [0, 1] indicating how far into the current simulation
+/// step we are at the time the frame is generated.
+static void render(double currentTime, double elapsedTime, double t)
+{
+    UNUSED_ARG(currentTime);
+    UNUSED_ARG(elapsedTime);
+    UNUSED_ARG(t);
+}
 
 /*///////////////////////
 //  Public Functions   //
@@ -121,9 +160,50 @@ int main(int argc, char **argv)
     }
 #endif
 
-    // run the game loop.
+    const double   Step = GW_SIM_TIMESTEP;
+    double previousTime = glfwGetTime();
+    double currentTime  = previousTime;
+    double elapsedTime  = 0.0;
+    double accumulator  = 0.0;
+    double simTime      = 0.0;
+    double t            = 0.0;
+
     while (!glfwWindowShouldClose(window))
     {
+        // update the main game clock.
+        previousTime = currentTime;
+        currentTime  = glfwGetTime();
+        elapsedTime  = currentTime - previousTime;
+        if (elapsedTime > GW_MAX_TIMESTEP)
+        {
+            elapsedTime = GW_MAX_TIMESTEP;
+        }
+        if (elapsedTime < GW_MIN_TIMESTEP)
+        {
+            elapsedTime = GW_MIN_TIMESTEP;
+        }
+        accumulator += elapsedTime;
+
+        // process user input at the start of the frame.
+        input(currentTime, elapsedTime);
+
+        // execute the simulation zero or more times per-frame.
+        // the simulation runs at a fixed timestep.
+        while (accumulator >= Step)
+        {
+            // @todo: swap game state buffers here.
+            // pass the current game state to simulate.
+            simulate(simTime, Step);
+            accumulator -= Step;
+            simTime += Step;
+        }
+
+        // interpolate display state.
+        t = accumulator / Step;
+        // state = currentState * t + previousState * (1.0 - t);
+        render(currentTime, elapsedTime, t);
+
+        // now present the current frame and process OS events.
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
