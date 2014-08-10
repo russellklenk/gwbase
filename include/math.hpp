@@ -10,11 +10,24 @@
 /*////////////////
 //   Includes   //
 ////////////////*/
+#include <limits>
 #include "common.hpp"
 
 /*////////////////
 //  Data Types  //
 ////////////////*/
+/// @summary Defines the state data associated with a WELL512 PRNG instance.
+/// The application allocates a new instance of this structure, and initializes
+/// it using the random_init() function.
+struct rng_state_t
+{
+    uint32_t index;     /// The current index into the state block
+    uint32_t state[16]; /// The RNG state data
+};
+
+/*///////////////
+//  Functions  //
+///////////////*/
 /// @summary Determines the smaller of two floating point values.
 /// @param a The first value.
 /// @param b The second value.
@@ -40,6 +53,20 @@ float min3(float a, float b, float c);
 /// @param c The third value.
 /// @return The largest of a, b and c.
 float max3(float a, float b, float c);
+
+/// @summary Performs linear interpolation between two scalar values.
+/// @param a The value at t = 0.
+/// @param b The value at t = 1.
+/// @param t A normalized interpolation parameter.
+/// @return The interpolated value.
+float mix(float a, float b, float t);
+
+/// @summary Clamps a value to a given range.
+/// @param x The value to clamp.
+/// @param a The lower-bound of the range.
+/// @param b The upper-bound of the range.
+/// @return The value x clamped to the range [a, b].
+float clamp(float x, float a, float b);
 
 /// @summary Determines whether two floating point values are close enough to
 /// be considered equal, using the same value for absolute and relative tolerance (FLT_EPSILON).
@@ -124,6 +151,82 @@ float bezier(float  a, float b, float in_t, float out_t, float t);
 /// @param t A normalized interpolation parameter.
 /// @return The interpolated value.
 float hermite(float a, float b, float in_t, float out_t, float t);
+
+/// @summary Determines the number of bytes of seed data required to seed a
+/// random number generator instance.
+/// @return The number of bytes required to seed a PRNG instance.
+size_t random_seed_size(void);
+
+/// @summary Initializes a PRNG instance to the default state. The RNG remains
+/// unseeded; call random_seed() before requesting data from the RNG.
+/// @param rng The PRNG state data to initialize.
+void random_init(rng_state_t *rng);
+
+/// @summary Supplies seed data to seed (or re-seed) a PRNG.
+/// @param rng The PRNG instance to seed (or re-seed.)
+/// @param seed_data Pointer to the start of a memory block containing the seed data for the PRNG.
+/// @param seed_size The size of the seed data, in bytes. This value must be
+/// at least the size specified by random_seed_size().
+void random_seed(rng_state_t *rng, void *seed_data, size_t seed_size);
+
+/// @summary Generates a sequence of values [start, start + count). The values are not randomized.
+/// @param values Pointer to storage for an array of 32-bit unsigned integer values that will be set to the values in the sequence.
+/// @param start The starting value of the sequence.
+/// @param count The number of values in the sequence.
+void random_sequence(uint32_t *values, uint32_t start, size_t count);
+
+/// @summary Shuffles the values in an array using the Knuth-Fisher-Yates algorithm.
+/// @param values The array of values to be shuffled.
+/// @param count The number of values in @a values to shuffle.
+/// @param rng The state of the random number generator to be used when shuffling the values of the array.
+void random_shuffle(uint32_t *values, size_t count, rng_state_t *rng);
+
+/// @summary Samples a set without replacement. All values in the set have
+/// uniform weight; that is, all values are equally likely to be chosen. Each
+/// value in the set can only be chosen once. Values are returned in ascending
+/// order. Use random_shuffle() to randomize the sampled values.
+/// @param population_size The total size of the population being sampled. The
+/// maximum allowable value is UINT32_MAX + 1 (4294967296).
+/// @param sample_size The number of samples being drawn from the set. The
+/// maximum allowable value is UINT32_MAX + 1 (4294967296).
+/// @param values Pointer to storage for an array of 32-bit unsigned integer
+/// values that will be set to the sampled values. Values are stored in ascending order.
+/// @param rng The state of the random number generator to be used when sampling the population.
+void random_choose(uint64_t population_size, uint64_t sample_size, uint32_t *values, rng_state_t *rng);
+
+/// @summary Samples a set with replacement. All values in the set have uniform
+/// weight; that is, all values are equally likely to be chosen. Each value in
+/// the set may be selected multiple times.
+/// @param population_size The total size of the population being sampled. The
+/// maximum allowable value is UINT32_MAX + 1 (4294967296).
+/// @param sample_size The number of samples being drawn from the set. The
+/// maximum allowable value is UINT32_MAX + 1 (4294967296).
+/// @param values Pointer to storage for an array of 32-bit unsigned integer
+/// values that will be set to the sampled values. Values are stored in ascending order.
+/// @param rng The state of the random number generator to be used when sampling the population.
+void random_choose_with_replacement(uint64_t population_size, uint64_t sample_size, uint32_t *values, rng_state_t *rng);
+
+/// @summary Draws a single double-precision IEEE-754 floating point value from
+/// a PRNG. Values are uniformly distributed over the range [0, 1).
+/// @param rng The PRNG instance to draw from.
+/// @return A value selected from the range [0, 1).
+double random_draw(rng_state_t *rng);
+
+/// @summary Draws a 32-bit unsigned integer value from a PRNG. Values are
+/// uniformly distributed over the range [min_value, max_value). The caller
+/// must ensure that min_value is less than max_value, and that the min and max
+/// values are within the defined range, or the function may return invalid results.
+/// @param min_value The inclusive lower-bound of the range. The maximum allowable value is UINT32_MAX + 1 (4294967296).
+/// @param max_value The exclusive upper-bound of the range. The maximum allowable value is UINT32_MAX + 1 (4294967296).
+/// @param rng The PRNG instance to draw from.
+/// @return A value selected from the range [min_value, max_value).
+uint32_t random_range(uint64_t min_value, uint64_t max_value, rng_state_t *rng);
+
+/// @summary Retrieves 32 random bits from a PRNG. The bits are returned without
+/// any transformation performed and the full range [0, UINT32_MAX] is possible.
+/// @param rng The PRNG instance to draw from.
+/// @return A value selected from the range [0, 4294967295].
+uint32_t random_bits(rng_state_t *rng);
 
 /// @summary Sets a 2-component vector or point value.
 /// @param dst_xy Pointer to the destination storage.
@@ -939,5 +1042,88 @@ float* mat4_transform_array_vec3(float * restrict dst_xyz, float const * restric
 float* mat4_transform_array_vec4(float * restrict dst_xyzw, float const * restrict src_xyzw, float const * restrict t16, size_t count);
 float* mat4_transform_array_point(float * restrict dst_xyz, float const * restrict src_xyz, float const * restrict t16, size_t count);
 float* mat4_transform_array_vector(float * restrict dst_xyz, float const * restrict src_xyz, float const * restrict t16, size_t count);
+
+/// Determine the smallest representable value for a given integer type.
+/// @return The smallest representable value for a given integer type.
+template <typename T>
+inline T int_type_min(void)
+{
+    return std::numeric_limits<T>::min();
+}
+
+/// Determine the largest representable value for a given integer type.
+/// @return The largest representable value for a given integer type.
+template <typename T>
+inline T int_type_max(void)
+{
+    return std::numeric_limits<T>::max();
+}
+
+/// Assign the sum of @a a and @a b to @a dst if the assignment would be
+/// allowed based on type, and no loss of precision would occur.
+/// @param dst The address of the value to update.
+/// @param a The left-hand addend.
+/// @param b The right-hand addend.
+/// @return true if the addition and assignment operation would have resulted
+/// in a loss of precision based on the source and destination types.
+template <typename X, typename Y, typename Z>
+inline bool int_assign_add(X &dst, Y const a, Z const b)
+{
+    Y __x = a+b; // compiler sum w/conversions
+    X __y = __x; // copy of result stored in dest. type
+    return (__x == __y && ((__x < 1) == (__y < 1)) ? (void)(dst = __y), false : true);
+}
+
+/// Assign the difference of @a a and @a b to @a dst if the assignment would be
+/// allowed based on type, and if no loss of precision would occur.
+/// @param dst The address of the value to update.
+/// @param a The minuend.
+/// @param b The subtrahend.
+/// @return true if the subtraction and assignment operation would have
+/// resulted in a loss of precision based on source and destination types.
+template <typename X, typename Y, typename Z>
+inline bool int_assign_sub(X &dst, Y const a, Z const b)
+{
+    Y __x = a-b; // compiler difference w/conversions
+    X __y = __x; // copy of result stored in dest. type
+    return (__x == __y && ((__x < 1) == (__y < 1)) ? (void)(dst = __y), false : true);
+}
+
+/// Assign the sum of @a a and @a b to @a dst if and only if the assignment
+/// would be allowed based on type, with no loss of precision or overflow.
+/// @param dst The address of the value to update.
+/// @param a The left-hand addend.
+/// @param b The right-hand addend.
+/// @return true if the addition and assignment operation would have resulted
+/// in a loss of precision, overflow or underflow based on the source and
+/// destination types.
+template <typename X, typename Y, typename Z>
+inline bool int_add(X &dst, Y const a, Z const b)
+{
+    Y __a = a;
+    Z __b = b;
+    return (__b < 1) ?
+        ((int_type_min<X>() - (__b) <= (__a)) ? int_assign_add(dst, __a, __b) : true) :
+        ((int_type_max<X>() - (__b) >= (__a)) ? int_assign_add(dst, __a, __b) : true) ;
+}
+
+/// Assign the difference of @a a and @a b to @a dst if and only if the
+/// assignment would be allowed based on type, with no loss of precision or
+/// overflow.
+/// @param dst The address of the value to update.
+/// @param a The minuend.
+/// @param b The subtrahend.
+/// @return true if the subtraction and assignment operation would have
+/// resulted in a loss of precision, overflow or underflow based on the source
+/// and destination types.
+template <typename X, typename Y, typename Z>
+inline bool int_sub(X &dst, Y const a, Z const b)
+{
+    Y __a = a;
+    Z __b = b;
+    return (__b < 1) ?
+        ((int_type_max<X>() + (__b) >= (__a)) ? int_assign_sub(dst, __a, __b) : true) :
+        ((int_type_min<X>() + (__b) <= (__a)) ? int_assign_sub(dst, __a, __b) : true) ;
+}
 
 #endif /* !defined(GW_MATH_HPP) */

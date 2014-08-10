@@ -26,14 +26,118 @@ static const uint32_t F32_NInf     = 0xFF800000;
 static const uint32_t F32_QNaN     = 0x7FC00000;
 //static const uint32_t F32_SNaN     = 0x7F800001;
 
+/// @summary The number of uint32_t values that are part of the seed data.
+#define WELL512_SEED_UNITS    (16U)
+
+/// @summary The size of the seed data for the WELL512 PRNG, specified in bytes.
+#define WELL512_SEED_SIZE     (16U * sizeof(uint32_t))
+
+/// @summary The size of the state data for the WELL512 PRNG, specified in bytes.
+#define WELL512_STATE_SIZE    (17U * sizeof(uint32_t))
+
+/// @summary The maximum value that can be output by the WELL1024 PRNG.
+#define WELL512_RAND_MAX      (4294967295U)
+
+/// @summary The value 1.0 / (WELL512_RAND_MAX + 1.0) as an IEEE-754 double.
+#define WELL512_RAND_SCALE    (2.32830643653869628906e-10)
+
 /*///////////////////////
 //   Local Functions   //
 ///////////////////////*/
+/// @summary Determines the number of bytes of seed data required to seed an
+/// instance of the WELL512 PRNG.
+/// @return The number of bytes required to seed a WELL512 PRNG.
+static inline size_t well512_seed_size(void)
+{
+    return WELL512_SEED_SIZE;
+}
+
+/// @summary Initializes a WELL512 PRNG instance to the default state. The RNG
+/// remains unseeded; call well512_seed() before requesting data from the RNG.
+/// @param rng The WELL512 PRNG state data to initialize.
+static void well512_init(rng_state_t *rng)
+{
+    if (rng != NULL)
+    {
+        rng->index = 0;
+        for (size_t i = 0; i < WELL512_SEED_UNITS; ++i)
+        {
+            rng->state[i]  = 0;
+        }
+    }
+}
+
+/// @summary Supplies seed data to seed (or re-seed) a WELL512 PRNG.
+/// @param rng The WELL512 PRNG instance to seed (or re-seed.)
+/// @param seed_data Pointer to the start of a memory block containing the seed data for the RNG.
+/// @param seed_size The size of the seed data, in bytes. This value must be
+/// at least the size specified by well512_seed_size().
+static void well512_seed(rng_state_t *rng, void *seed_data, size_t seed_size)
+{
+    if (rng       == NULL) return;
+    if (seed_data == NULL) return;
+    if (seed_size  < WELL512_SEED_SIZE) return;
+    uint32_t *seed = (uint32_t*) seed_data;
+    for (size_t i  = 0; i < WELL512_SEED_UNITS; ++i)
+    {
+        rng->state[i] = seed[i];
+    }
+    rng->index = 0;
+}
+
+/// @summary Draws a single double-precision IEEE-754 floating point value from
+/// a WELL512 PRNG. Values are uniformly distributed over the range [0, 1).
+/// @param rng The WELL512 PRNG instance to draw from.
+/// @return A value selected from the range [0, 1).
+static inline double well512_draw(rng_state_t *rng)
+{
+    uint32_t &r = rng->index;
+    uint32_t *s = rng->state;
+    uint32_t  n = r;    // read the current value of rng->index
+    uint32_t  a = s[n];
+    uint32_t  b = 0;
+    uint32_t  c = s[(n + 13) & 15];
+    uint32_t  d = 0;
+    b           = a ^ c ^ (a << 16) ^ (c << 15);
+    c           = s[(n + 9)   & 15];
+    c          ^= (c >> 11);
+    a           = s[n] = b ^ c;
+    d           = a ^ ((a << 5) & 0xDA442D24UL);
+    r           = (n + 15) & 15; // update  rng->index
+    n           = (n + 15) & 15; // updated rng->index; update cached
+    a           = s[n];
+    s[n]        = a ^ b ^ d ^ (a << 2) ^ (b << 18) ^ (c << 28);
+    return s[n] * WELL512_RAND_SCALE;
+}
+
+/// @summary Retrieves 32 random bits from a WELL512 PRNG. The bits are returned
+/// without any transformation performed and the full range [0, UINT32_MAX] is possible.
+/// @param rng The WELL512 PRNG instance to draw from.
+/// @return A value selected from the range [0, 4294967295].
+static inline uint32_t well512_bits(rng_state_t *rng)
+{
+    uint32_t &r = rng->index;
+    uint32_t *s = rng->state;
+    uint32_t  n = r;    // read the current value of rng->index
+    uint32_t  a = s[n];
+    uint32_t  b = 0;
+    uint32_t  c = s[(n + 13) & 15];
+    uint32_t  d = 0;
+    b           = a ^ c ^ (a << 16) ^ (c << 15);
+    c           = s[(n + 9)   & 15];
+    c          ^= (c >> 11);
+    a           = s[n] = b ^ c;
+    d           = a ^ ((a << 5) & 0xDA442D24UL);
+    r           = (n + 15) & 15; // update  rng->index
+    n           = (n + 15) & 15; // updated rng->index; update cached
+    a           = s[n];
+    s[n]        = a ^ b ^ d ^ (a << 2) ^ (b << 18) ^ (c << 28);
+    return s[n];
+}
 
 /*///////////////////////
 //  Public Functions   //
 ///////////////////////*/
-
 float min2(float a, float b)
 {
     return (a < b ? a : b);
@@ -52,6 +156,16 @@ float min3(float a, float b, float c)
 float max3(float a, float b, float c)
 {
     return (a > b ? (a > c ? a : c) : (b > c ? b : c));
+}
+
+float mix(float a, float b, float t)
+{
+    return (a + ((b - a) * t));
+}
+
+float clamp(float x, float a, float b)
+{
+    return max2(min2(x, b), a);
 }
 
 bool eq(float a, float b)
@@ -128,6 +242,105 @@ float hermite(float a, float b, float in_t, float out_t, float t)
             (-2.0f * t3   + 3.0f * t2)         * b     +
             (  t3  - 2.0f *   t2 +  t)         * out_t +
             (  t3  -  t2)                      * in_t);
+}
+
+size_t random_seed_size(void)
+{
+    return well512_seed_size();
+}
+
+void random_init(rng_state_t *rng)
+{
+    well512_init(rng);
+}
+
+void random_seed(rng_state_t *rng, void *seed_data, size_t seed_size)
+{
+    well512_seed(rng, seed_data, seed_size);
+}
+
+void random_sequence(uint32_t *values, uint32_t start, size_t count)
+{
+    uint32_t n = (uint32_t)  count;
+    for (uint32_t i = 0; i < n; ++i)
+    {
+        *values++ = start  + i;
+    }
+}
+
+void random_shuffle(uint32_t *values, size_t count, rng_state_t *rng)
+{
+    // algorithm 3.4.2P of The Art of Computer Programming, Vol. 2
+    uint32_t n = (uint32_t) count;
+    while   (n > 1)
+    {
+        uint32_t k = random_range(0, n, rng); // k in [0, n)
+        uint32_t t = values[k];               // swap values[k] and values[n-1]
+        --n;                                  // n decreases every iteration
+        values[k]  = values[n];
+        values[n]  = t;
+    }
+}
+
+void random_choose(uint64_t population_size, uint64_t sample_size, uint32_t *values, rng_state_t *rng)
+{
+    // algorithm 3.4.2S of The Art of Computer Programming, Vol. 2
+    uint64_t n = sample_size;      // max allowable is UINT32_MAX + 1
+    uint64_t N = population_size;  // max allowable is UINT32_MAX + 1
+    uint32_t t = 0;                // total dealt with so far
+    uint32_t m = 0;                // number selected so far
+    while   (m < n)
+    {
+        double v = random_draw(rng);
+        if ((N - t) * v >= (n-m))
+        {
+            ++t;
+        }
+        else
+        {
+            values[m++] = t++;
+        }
+    }
+}
+
+void random_choose_with_replacement(uint64_t population_size, uint64_t sample_size, uint32_t *values, rng_state_t *rng)
+{
+    for (uint64_t i = 0; i < sample_size; ++i)
+    {
+        *values++ = random_range(0, population_size, rng);
+    }
+}
+
+double random_draw(rng_state_t *rng)
+{
+    return well512_draw(rng); // in [0, 1)
+}
+
+uint32_t random_range(uint64_t min_value, uint64_t max_value, rng_state_t *rng)
+{
+    // @note: max_value must be greater than min_value (or we divide by zero)
+    // @note: the max value of max_value is UINT32_MAX + 1
+    // see http://www.azillionmonkeys.com/qed/random.html
+    // see http://en.wikipedia.org/wiki/Fisher-Yates_shuffle#Modulo_bias
+    // remove the bias that can result when the range 'r'
+    // does not divide evenly into the PRNG range 'n'.
+    uint64_t r = max_value - min_value; // size of request range [min, max)
+    uint64_t u = WELL512_RAND_MAX;      // PRNG inclusive upper bound
+    uint64_t n = u + 1;                 // size of PRNG range [0, UINT32_MAX]
+    uint64_t i = n / r;                 // # times whole of 'r' fits in 'n'
+    uint64_t m = r * i;                 // largest integer multiple of 'r'<='n'
+    uint64_t x = 0;                     // raw value from PRNG
+    do
+    {
+        x = well512_bits(rng);          // x in [0, UINT32_MAX]
+    } while (x >= m);
+    x /= i;                             // x -> [0, r) and [0, UINT32_MAX]
+    return uint32_t(x + min_value);     // x -> [min, max)
+}
+
+uint32_t random_bits(rng_state_t *rng)
+{
+    return well512_bits(rng);           // in [0, UINT32_MAX]
 }
 
 float* vec2_set_xy(float *dst_xy, float x, float y)
