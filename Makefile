@@ -1,6 +1,7 @@
 EXE_TARGET  := gw
 EXE_SRCS    := \
 	src/main.cpp \
+	src/math.cpp \
 	src/display.cpp \
 	src/input.cpp \
 	src/entity.cpp \
