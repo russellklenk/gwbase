@@ -91,6 +91,11 @@ protected:
     shader_desc_t     ShaderDesc;
     GLuint            ShaderProgram;
     GLuint            VAO;
+    GLuint            VBOPos;
+    GLuint            VBOTex;
+    GLuint            VBOClr;
+    size_t            BufferOffset;
+    size_t            BufferCapacity;
     float             Matrix[16];
 
 protected:
@@ -102,7 +107,7 @@ public:
     virtual ~SpriteBatch(void);
 
 public:
-    bool CreateGPUResources(void);
+    bool CreateGPUResources(size_t capacity);
     void DeleteGPUResources(void);
     void SetProjection(float const *m16);
     void Draw(uint8_t z, Texture *t, rect_t const &dst, rect_t const &src, float const *rgba);

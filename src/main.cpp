@@ -167,13 +167,10 @@ int main(int argc, char **argv)
 
     // monkey stuff
     gTEX = new Texture();
-    if (gTEX->LoadFromFile("test_bg.tga"))
-    {
-        printf("Loaded texture ok!\n");
-    }
+    gTEX->LoadFromFile("assets/test_bg.tga");
 
     gBATCH = new SpriteBatch();
-    gBATCH->CreateGPUResources();
+    gBATCH->CreateGPUResources(2048);
 
     const double   Step = GW_SIM_TIMESTEP;
     double previousTime = glfwGetTime();

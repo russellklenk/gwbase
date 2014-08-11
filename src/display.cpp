@@ -8,6 +8,7 @@
 ////////////////*/
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "display.hpp"
 #include "glimage.hpp"
 #include "imtga.hpp"
@@ -158,7 +159,12 @@ SpriteBatch::SpriteBatch(void)
     UniformMSS(NULL),
     SamplerTex(NULL),
     ShaderProgram(0),
-    VAO(0)
+    VAO(0),
+    VBOPos(0),
+    VBOTex(0),
+    VBOClr(0),
+    BufferOffset(0),
+    BufferCapacity(0)
 {
     /* empty */
 }
@@ -190,7 +196,7 @@ void SpriteBatch::SixIndices(std::vector<uint16_t> &v, uint16_t start)
     v.push_back(start + 2);
 }
 
-bool SpriteBatch::CreateGPUResources(void)
+bool SpriteBatch::CreateGPUResources(size_t capacity)
 {
     shader_source_t     sources;
     shader_source_init(&sources);
@@ -206,9 +212,27 @@ bool SpriteBatch::CreateGPUResources(void)
 
         glGenVertexArrays(1, &VAO);
         glBindVertexArray(VAO);
+
+        glGenBuffers(1, &VBOPos);
+        glBindBuffer(GL_ARRAY_BUFFER, VBOPos);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 2 * capacity, NULL, GL_STREAM_DRAW);
         glEnableVertexAttribArray(AttribPos->Location);
+        glVertexAttribPointer(AttribPos->Location, 2, GL_FLOAT, GL_FALSE, 0, GL_BUFFER_OFFSET(0));
+
+        glGenBuffers(1, &VBOTex);
+        glBindBuffer(GL_ARRAY_BUFFER, VBOTex);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 2 * capacity, NULL, GL_STREAM_DRAW);
         glEnableVertexAttribArray(AttribTex->Location);
+        glVertexAttribPointer(AttribTex->Location, 2, GL_FLOAT, GL_FALSE, 0, GL_BUFFER_OFFSET(0));
+
+        glGenBuffers(1, &VBOClr);
+        glBindBuffer(GL_ARRAY_BUFFER, VBOClr);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 4 * capacity, NULL, GL_STREAM_DRAW);
         glEnableVertexAttribArray(AttribClr->Location);
+        glVertexAttribPointer(AttribClr->Location, 4, GL_FLOAT, GL_FALSE, 0, GL_BUFFER_OFFSET(0));
+
+        BufferOffset   = 0;
+        BufferCapacity = capacity;
         return true;
     }
     else return false;
@@ -220,6 +244,21 @@ void SpriteBatch::DeleteGPUResources(void)
     {
         glDeleteVertexArrays(1, &VAO);
         VAO = 0;
+    }
+    if (VBOPos)
+    {
+        glDeleteBuffers(1, &VBOPos);
+        VBOPos = 0;
+    }
+    if (VBOTex)
+    {
+        glDeleteBuffers(1, &VBOTex);
+        VBOTex = 0;
+    }
+    if (VBOClr)
+    {
+        glDeleteBuffers(1, &VBOClr);
+        VBOClr = 0;
     }
     if (ShaderProgram)
     {
@@ -321,11 +360,72 @@ void SpriteBatch::Flush(void)
             {
                 set_sampler(SamplerTex, (*iter).first.second->GetId());
 
-                glVertexAttribPointer(AttribPos->Location, 2, GL_FLOAT, GL_FALSE, 0, &(*iter).second.Vertices[0]);
-                glVertexAttribPointer(AttribTex->Location, 2, GL_FLOAT, GL_FALSE, 0, &(*iter).second.TexCoords[0]);
-                glVertexAttribPointer(AttribClr->Location, 4, GL_FLOAT, GL_FALSE, 0, &(*iter).second.Colors[0]);
+                // copy data into the vertex arrays.
+                size_t offset = BufferOffset;
+                size_t vcount = (*iter).second.Vertices.size() / 8;
+                size_t pcount = (*iter).second.Indices.size()  / 6;
+                size_t nverts = 0;
+                size_t nprims = 0;
+                size_t pindex = 0;
+                size_t tindex = 0;
+                size_t cindex = 0;
+                size_t iindex = 0;
 
-                glDrawElements(GL_TRIANGLES, int32_t((*iter).second.Indices.size()), GL_UNSIGNED_SHORT, &(*iter).second.Indices[0]);
+                while (vcount > 0)
+                {
+                    if ((offset + vcount) <= BufferCapacity)
+                    {
+                        // there's sufficient space in the buffer.
+                        nverts = vcount;
+                        nprims = pcount;
+                    }
+                    else
+                    {
+                        // not enough space in the buffer for all vertices.
+                        nverts = BufferCapacity - BufferOffset;
+                        nprims = nverts / 4;
+                    }
+
+                    glBindBuffer(GL_ARRAY_BUFFER, VBOPos);
+                    size_t num = nverts * sizeof(float);
+                    size_t ofs = offset * sizeof(float);
+                    float *pos = (float*) glMapBufferRange(GL_ARRAY_BUFFER, ofs * 2, num * 2, GL_MAP_READ_BIT);
+                    memcpy(pos, &(*iter).second.Vertices[pindex], num * 2);
+                    glUnmapBuffer(GL_ARRAY_BUFFER);
+
+                    glBindBuffer(GL_ARRAY_BUFFER, VBOTex);
+                    float *tex = (float*) glMapBufferRange(GL_ARRAY_BUFFER, ofs * 2, num * 2, GL_MAP_READ_BIT);
+                    memcpy(tex, &(*iter).second.TexCoords[tindex], num * 2);
+                    glUnmapBuffer(GL_ARRAY_BUFFER);
+
+                    glBindBuffer(GL_ARRAY_BUFFER, VBOClr);
+                    float *clr = (float*) glMapBufferRange(GL_ARRAY_BUFFER, ofs * 4, num * 4, GL_MAP_READ_BIT);
+                    memcpy(clr, &(*iter).second.Colors[cindex], num * 4);
+                    glUnmapBuffer(GL_ARRAY_BUFFER);
+
+                    glDrawElements(GL_TRIANGLES, nprims * 6, GL_UNSIGNED_SHORT, &(*iter).second.Indices[iindex]);
+
+                    offset += nverts;
+                    vcount -= nverts;
+                    pcount -= nprims;
+                    pindex += nverts * 2;
+                    tindex += nverts * 2;
+                    cindex += nverts * 4;
+                    iindex += nprims * 6;
+                    BufferOffset += nverts;
+
+                    if (BufferOffset == BufferCapacity)
+                    {
+                        // orphan the vertex buffers.
+                        glBindBuffer(GL_ARRAY_BUFFER, VBOPos);
+                        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 2 * BufferCapacity, NULL, GL_STREAM_DRAW);
+                        glBindBuffer(GL_ARRAY_BUFFER, VBOTex);
+                        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 2 * BufferCapacity, NULL, GL_STREAM_DRAW);
+                        glBindBuffer(GL_ARRAY_BUFFER, VBOClr);
+                        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 4 * BufferCapacity, NULL, GL_STREAM_DRAW);
+                        BufferOffset = 0;
+                    }
+                }
 
                 (*iter).second.Vertices.clear();
                 (*iter).second.TexCoords.clear();
