@@ -240,21 +240,21 @@ float* vec2_set_xy(float *dst_xy, float x, float y);
 /// @param dst_xy Pointer to the destination storage.
 /// @param src_xy Pointer to the source value.
 /// @return The pointer @a dst_xy.
-float* vec2_set_vec2(float * restrict dst_xy, float const * restrict src_xy);
+float* vec2_set_vec2(float * __restrict dst_xy, float const * __restrict src_xy);
 
 /// @summary Extracts the x- and y-components of a vector or point value into a
 /// destination value. The source and destination values must not overlap.
 /// @param dst_xy Pointer to the destination storage.
 /// @param src_xyz Pointer to the source value.
 /// @return The pointer dst_xy.
-float* vec2_set_vec3(float * restrict dst_xy, float const * restrict src_xyz);
+float* vec2_set_vec3(float * __restrict dst_xy, float const * __restrict src_xyz);
 
 /// @summary Extracts the x- and y-components of a vector or point value into a
 /// destination value. The source and destination values must not overlap.
 /// @param dst_xy Pointer to the destination storage.
 /// @param src_xyzw Pointer to the source value.
 /// @return The pointer dst_xy.
-float* vec2_set_vec4(float * restrict dst_xy, float const * restrict src_xyzw);
+float* vec2_set_vec4(float * __restrict dst_xy, float const * __restrict src_xyzw);
 
 /// @summary Sets a 3-component vector or point value.
 /// @param dst_xyz Pointer to the destination storage.
@@ -271,21 +271,21 @@ float* vec3_set_xyz(float *dst_xyz, float x, float y, float z);
 /// @param src_xy Pointer to the source storage from which the x- and y-components will be read.
 /// @param z The z-component value.
 /// @return The pointer to dst_xyz.
-float* vec3_set_vec2(float * restrict dst_xyz, float const * restrict src_xy, float z);
+float* vec3_set_vec2(float * __restrict dst_xyz, float const * __restrict src_xy, float z);
 
 /// @summary Copies a 3-component vector or point value. The source and
 /// destination values must not overlap.
 /// @param dst_xyz Pointer to the destination storage.
 /// @param src_xyz Pointer to the source value.
 /// @return The pointer dst_xyz.
-float* vec3_set_vec3(float * restrict dst_xyz, float const * restrict src_xyz);
+float* vec3_set_vec3(float * __restrict dst_xyz, float const * __restrict src_xyz);
 
 /// @summary Extracts the x- and y- and z-components of a vector or point value
 /// into a destination value. The source and destination values must not overlap.
 /// @param dst_xyz Pointer to the destination storage.
 /// @param src_xyzw Pointer to the source storage from which the x- y- and z-components will be read.
 /// @return The pointer to dst_xyz.
-float* vec3_set_vec4(float * restrict dst_xyz, float const * restrict src_xyzw);
+float* vec3_set_vec4(float * __restrict dst_xyz, float const * __restrict src_xyzw);
 
 /// @summary Sets a 4-component vector or point value.
 /// @param dst_xyzw Pointer to the destination storage.
@@ -306,7 +306,7 @@ float* vec4_set_xyzw(float *dst_xyzw, float x, float y, float z, float w);
 /// @param w The w-component of the vector or point. Vectors typically have a
 /// w-component of zero; points typically have a w-component of one.
 /// @return The pointer dst_xyzw.
-float* vec4_set_vec2(float * restrict dst_xyzw, float const * restrict src_xy, float z, float w);
+float* vec4_set_vec2(float * __restrict dst_xyzw, float const * __restrict src_xy, float z, float w);
 
 /// @summary Extracts the x- y- and z-components of a vector or point value into
 /// a destination value with explicitly specified w-component. The source and
@@ -316,13 +316,13 @@ float* vec4_set_vec2(float * restrict dst_xyzw, float const * restrict src_xy, f
 /// @param w The w-component of the vector or point. Vectors typically have a
 /// w-component of zero; points typically have a w-component of one.
 /// @return The pointer dst_xyzw.
-float* vec4_set_vec3(float * restrict dst_xyzw, float const * restrict src_xyz, float w);
+float* vec4_set_vec3(float * __restrict dst_xyzw, float const * __restrict src_xyz, float w);
 
 /// @summary Copies a 4-component vector or point value. The source and destination values must not overlap.
 /// @param dst_xyzw Pointer to the destination storage.
 /// @param src_xyzw Pointer to the source value.
 /// @return The pointer dst_xyzw.
-float* vec4_set_vec4(float * restrict dst_xyzw, float const * restrict src_xyzw);
+float* vec4_set_vec4(float * __restrict dst_xyzw, float const * __restrict src_xyzw);
 
 /// @summary Sets all elements of a vector to the IEEE-754 floating point Not-A-Number (NaN) value.
 /// @param dst_xy Pointer to the destination storage.
@@ -448,19 +448,19 @@ float* vec4_set_unit_w(float *dst_xyzw);
 /// @param a_xy The first vector value.
 /// @param b_xy The second vector value.
 /// @return true if a_xy and b_xy can be considered equal.
-bool vec2_eq(float const * restrict a_xy, float const * restrict b_xy);
+bool vec2_eq(float const * __restrict a_xy, float const * __restrict b_xy);
 
 /// @summary Compares two vector values for equality.
 /// @param a_xyz The first vector value.
 /// @param b_xyz The second vector value.
 /// @return true if a_xyz and b_xyz can be considered equal.
-bool vec3_eq(float const * restrict a_xyz, float const * restrict b_xyz);
+bool vec3_eq(float const * __restrict a_xyz, float const * __restrict b_xyz);
 
 /// @summary Compares two vector values for equality.
 /// @param a_xyzw The first vector value.
 /// @param b_xyzw The second vector value.
 /// @return true if a_xyzw and b_xyzw can be considered equal.
-bool vec4_eq(float const * restrict a_xyzw, float const * restrict b_xyzw);
+bool vec4_eq(float const * __restrict a_xyzw, float const * __restrict b_xyzw);
 
 /// @summary Performs component-wise addition of two vector quantities, storing
 /// the result in a third, such that dst = a + b.
@@ -468,7 +468,7 @@ bool vec4_eq(float const * restrict a_xyzw, float const * restrict b_xyzw);
 /// @param a_xy The first source value.
 /// @param b_xy The second source value.
 /// @return The pointer dst_xy.
-float* vec2_add(float * restrict dst_xy, float const * restrict a_xy, float const * restrict b_xy);
+float* vec2_add(float * __restrict dst_xy, float const * __restrict a_xy, float const * __restrict b_xy);
 
 /// @summary Performs component-wise addition of two vector quantities, storing
 /// the result in a third, such that dst = a + b.
@@ -476,7 +476,7 @@ float* vec2_add(float * restrict dst_xy, float const * restrict a_xy, float cons
 /// @param a_xyz The first source value.
 /// @param b_xyz The second source value.
 /// @return The pointer dst_xyz.
-float* vec3_add(float * restrict dst_xyz, float const * restrict a_xyz, float const * restrict b_xyz);
+float* vec3_add(float * __restrict dst_xyz, float const * __restrict a_xyz, float const * __restrict b_xyz);
 
 /// @summary Performs component-wise addition of two vector quantities, storing
 /// the result in a third, such that dst = a + b.
@@ -484,7 +484,7 @@ float* vec3_add(float * restrict dst_xyz, float const * restrict a_xyz, float co
 /// @param a_xyzw The first source value.
 /// @param b_xyzw The second source value.
 /// @return The pointer dst_xyzw.
-float* vec4_add(float * restrict dst_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw);
+float* vec4_add(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw);
 
 /// @summary Performs component-wise subtraction of two vector quantities,
 /// storing the result in a third, such that dst = a - b.
@@ -492,7 +492,7 @@ float* vec4_add(float * restrict dst_xyzw, float const * restrict a_xyzw, float 
 /// @param a_xy The first source value.
 /// @param b_xy The second source value.
 /// @return The pointer dst_xy.
-float* vec2_sub(float * restrict dst_xy, float const * restrict a_xy, float const * restrict b_xy);
+float* vec2_sub(float * __restrict dst_xy, float const * __restrict a_xy, float const * __restrict b_xy);
 
 /// @summary Performs component-wise subtraction of two vector quantities,
 /// storing the result in a third, such that dst = a - b.
@@ -500,7 +500,7 @@ float* vec2_sub(float * restrict dst_xy, float const * restrict a_xy, float cons
 /// @param a_xyz The first source value.
 /// @param b_xyz The second source value.
 /// @return The pointer dst_xyz.
-float* vec3_sub(float * restrict dst_xyz, float const * restrict a_xyz, float const * restrict b_xyz);
+float* vec3_sub(float * __restrict dst_xyz, float const * __restrict a_xyz, float const * __restrict b_xyz);
 
 /// @summary Performs component-wise subtraction of two vector quantities,
 /// storing the result in a third, such that dst = a - b.
@@ -508,7 +508,7 @@ float* vec3_sub(float * restrict dst_xyz, float const * restrict a_xyz, float co
 /// @param a_xyzw The first source value.
 /// @param b_xyzw The second source value.
 /// @return The pointer dst_xyzw.
-float* vec4_sub(float * restrict dst_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw);
+float* vec4_sub(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw);
 
 /// @summary Performs component-wise multiplication of two vector quantities,
 /// storing the result in a third, such that dst = a * b.
@@ -516,7 +516,7 @@ float* vec4_sub(float * restrict dst_xyzw, float const * restrict a_xyzw, float 
 /// @param a_xy The first source value.
 /// @param b_xy The second source value.
 /// @return The pointer to dst_xy.
-float* vec2_mul(float * restrict dst_xy, float const * restrict a_xy, float const * restrict b_xy);
+float* vec2_mul(float * __restrict dst_xy, float const * __restrict a_xy, float const * __restrict b_xy);
 
 /// @summary Performs component-wise multiplication of two vector quantities,
 /// storing the result in a third, such that dst = a * b.
@@ -524,7 +524,7 @@ float* vec2_mul(float * restrict dst_xy, float const * restrict a_xy, float cons
 /// @param a_xyz The first source value.
 /// @param b_xyz The second source value.
 /// @return The pointer to dst_xyz.
-float* vec3_mul(float * restrict dst_xyz, float const * restrict a_xyz, float const * restrict b_xyz);
+float* vec3_mul(float * __restrict dst_xyz, float const * __restrict a_xyz, float const * __restrict b_xyz);
 
 /// @summary Performs component-wise multiplication of two vector quantities,
 /// storing the result in a third, such that dst = a * b.
@@ -532,7 +532,7 @@ float* vec3_mul(float * restrict dst_xyz, float const * restrict a_xyz, float co
 /// @param a_xyzw The first source value.
 /// @param b_xyzw The second source value.
 /// @return The pointer to dst_xyzw.
-float* vec4_mul(float * restrict dst_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw);
+float* vec4_mul(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw);
 
 /// @summary Performs component-wise division of two vector quantities, storing
 /// the result in a third, such that dst = a / b.
@@ -540,7 +540,7 @@ float* vec4_mul(float * restrict dst_xyzw, float const * restrict a_xyzw, float 
 /// @param a_xy The first source value.
 /// @param b_xy The second source value.
 /// @return The pointer to dst_xy.
-float* vec2_div(float * restrict dst_xy, float const * restrict a_xy, float const * restrict b_xy);
+float* vec2_div(float * __restrict dst_xy, float const * __restrict a_xy, float const * __restrict b_xy);
 
 /// @summary Performs component-wise division of two vector quantities, storing
 /// the result in a third, such that dst = a / b.
@@ -548,7 +548,7 @@ float* vec2_div(float * restrict dst_xy, float const * restrict a_xy, float cons
 /// @param a_xyz The first source value.
 /// @param b_xyz The second source value.
 /// @return The pointer to @a dst_xyz.
-float* vec3_div(float * restrict dst_xyz, float const * restrict a_xyz, float const * restrict b_xyz);
+float* vec3_div(float * __restrict dst_xyz, float const * __restrict a_xyz, float const * __restrict b_xyz);
 
 /// @summary Performs component-wise division of two vector quantities, storing
 /// the result in a third, such that dst = a / b.
@@ -556,28 +556,28 @@ float* vec3_div(float * restrict dst_xyz, float const * restrict a_xyz, float co
 /// @param a_xyzw The first source value.
 /// @param b_xyzw The second source value.
 /// @return The pointer to dst_xyzw.
-float* vec4_div(float * restrict dst_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw);
+float* vec4_div(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw);
 
 /// @summary Multiplies each component of a vector value by a scalar.
 /// @param dst_xy Pointer to the destination storage.
 /// @param a_xy The source vector value.
 /// @param b The scalar value.
 /// @return The pointer to dst_xy.
-float* vec2_scl(float * restrict dst_xy, float const * restrict a_xy, float b);
+float* vec2_scl(float * __restrict dst_xy, float const * __restrict a_xy, float b);
 
 /// @summary Multiplies each component of a vector value by a scalar.
 /// @param dst_xyz Pointer to the destination storage.
 /// @param a_xyz The source vector value.
 /// @param b The scalar value.
 /// @return The pointer to dst_xyz.
-float* vec3_scl(float * restrict dst_xyz, float const * restrict a_xyz, float b);
+float* vec3_scl(float * __restrict dst_xyz, float const * __restrict a_xyz, float b);
 
 /// @summary Multiplies each component of a vector value by a scalar.
 /// @param dst_xyzw Pointer to the destination storage.
 /// @param a_xyzw The source vector value.
 /// @param b The scalar value.
 /// @return The pointer to dst_xyzw.
-float* vec4_scl(float * restrict dst_xyzw, float const * restrict a_xyzw, float b);
+float* vec4_scl(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float b);
 
 /// @summary Multiplies each component of a vector value by a scalar. Only the
 /// first three components of the vector are multiplied by the scalar value.
@@ -585,63 +585,63 @@ float* vec4_scl(float * restrict dst_xyzw, float const * restrict a_xyzw, float 
 /// @param a_xyzw The source vector value.
 /// @param b The scalar value.
 /// @return The pointer to dst_xyzw.
-float* vec4_scl3(float * restrict dst_xyzw, float const * restrict a_xyzw, float b);
+float* vec4_scl3(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float b);
 
 /// @summary Negates each component of a vector value, preserving the magnitude
 /// but reversing the direction.
 /// @param dst_xy Pointer to the destination storage.
 /// @param src_xy The source vector value.
 /// @return The pointer to dst_xy.
-float* vec2_neg(float * restrict dst_xy, float const * restrict src_xy);
+float* vec2_neg(float * __restrict dst_xy, float const * __restrict src_xy);
 
 /// @summary Negates each component of a vector value, preserving the magnitude
 /// but reversing the direction.
 /// @param dst_xyz Pointer to the destination storage.
 /// @param src_xyz The source vector value.
 /// @return The pointer to dst_xyz.
-float* vec3_neg(float * restrict dst_xyz, float const * restrict src_xyz);
+float* vec3_neg(float * __restrict dst_xyz, float const * __restrict src_xyz);
 
 /// @summary Negates each component of a vector value, preserving the magnitude
 /// but reversing the direction.
 /// @param dst_xyzw Pointer to the destination storage.
 /// @param src_xyzw The source vector value.
 /// @return The pointer to dst_xyzw.
-float* vec4_neg(float * restrict dst_xyzw, float const * restrict src_xyzw);
+float* vec4_neg(float * __restrict dst_xyzw, float const * __restrict src_xyzw);
 
 /// @summary Negates each component of a vector value, preserving the magnitude
 /// but reversing the direction. Only the first three components are negated.
 /// @param dst_xyzw Pointer to the destination storage.
 /// @param src_xyzw The source vector value.
 /// @return The pointer to dst_xyzw.
-float* vec4_neg3(float * restrict dst_xyzw, float const * restrict src_xyzw);
+float* vec4_neg3(float * __restrict dst_xyzw, float const * __restrict src_xyzw);
 
 /// @summary Computes the dot product of two vectors.
 /// @param dst On return, this value is set to the dot product of a and b.
 /// @param a_xy Vector value a.
 /// @param b_xy Vector value b.
 /// @return The dot product of the vectors.
-float vec2_dot(float &dst, float const * restrict a_xy, float const * restrict b_xy);
+float vec2_dot(float &dst, float const * __restrict a_xy, float const * __restrict b_xy);
 
 /// @summary Computes the dot product of two vectors.
 /// @param dst On return, this value is set to the dot product of a and b.
 /// @param a_xyz Vector value a.
 /// @param b_xyz Vector value b.
 /// @return The dot product of the vectors.
-float vec3_dot(float &dst, float const * restrict a_xyz, float const * restrict b_xyz);
+float vec3_dot(float &dst, float const * __restrict a_xyz, float const * __restrict b_xyz);
 
 /// @summary Computes the dot product of two vectors.
 /// @param dst On return, this value is set to the dot product of a and b.
 /// @param a_xyzw Vector value a.
 /// @param b_xyzw Vector value b.
 /// @return The dot product of the vectors.
-float vec4_dot(float &dst, float const * restrict a_xyzw, float const * restrict b_xyzw);
+float vec4_dot(float &dst, float const * __restrict a_xyzw, float const * __restrict b_xyzw);
 
 /// @summary Computes the dot product of two vectors, considering only the first three components of each.
 /// @param dst On return, this value is set to the dot product of a and b.
 /// @param a_xyzw Vector value a.
 /// @param b_xyzw Vector value b.
 /// @return The dot product of the vectors.
-float vec4_dot3(float &dst, float const * restrict a_xyzw, float const * restrict b_xyzw);
+float vec4_dot3(float &dst, float const * __restrict a_xyzw, float const * __restrict b_xyzw);
 
 /// @summary Calculates the magnitude (length) of a vector.
 /// @param dst On return, this value is set to the length of the vector.
@@ -697,21 +697,21 @@ float vec4_len3_sq(float &dst, float const *a_xyzw);
 /// @param dst_xy Pointer to the destination storage.
 /// @param src_xy The source vector value.
 /// @return The pointer dst_xy.
-float* vec2_nrm(float * restrict dst_xy, float const * restrict src_xy);
+float* vec2_nrm(float * __restrict dst_xy, float const * __restrict src_xy);
 
 /// @summary Calculates the normalized (unit-length) vector for a given vector
 /// value. The normalized vector has the same direction, but magnitude 1.
 /// @param dst_xyz Pointer to the destination storage.
 /// @param src_xyz The source vector value.
 /// @return The pointer dst_xyz.
-float* vec3_nrm(float * restrict dst_xyz, float const * restrict src_xyz);
+float* vec3_nrm(float * __restrict dst_xyz, float const * __restrict src_xyz);
 
 /// @summary Calculates the normalized (unit-length) vector for a given vector
 /// value. The normalized vector has the same direction, but magnitude 1.
 /// @param dst_xyzw Pointer to the destination storage.
 /// @param src_xyzw The source vector value.
 /// @return The pointer dst_xyzw.
-float* vec4_nrm(float * restrict dst_xyzw, float const * restrict src_xyzw);
+float* vec4_nrm(float * __restrict dst_xyzw, float const * __restrict src_xyzw);
 
 /// @summary Calculates the normalized (unit-length) vector for a given vector
 /// value. The normalized vector has the same direction, but magnitude 1. Only
@@ -720,13 +720,13 @@ float* vec4_nrm(float * restrict dst_xyzw, float const * restrict src_xyzw);
 /// @param dst_xyzw Pointer to the destination storage.
 /// @param src_xyzw The source vector value.
 /// @return The pointer dst_xyzw.
-float* vec4_nrm3(float * restrict dst_xyzw, float const * restrict src_xyzw);
+float* vec4_nrm3(float * __restrict dst_xyzw, float const * __restrict src_xyzw);
 
 /// @summary Calculates a vector perpendicular to a given vector, but with the same magnitude.
 /// @param dst_xy Pointer to the destination storage.
 /// @param src_xy The source vector value.
 /// @return The pointer dst_xy.
-float* vec2_perp(float * restrict dst_xy, float const * restrict src_xy);
+float* vec2_perp(float * __restrict dst_xy, float const * __restrict src_xy);
 
 /// @summary Calculates the cross product of two vectors, producing a third
 /// vector that is orthogonal to the source vectors; the dot product of the
@@ -735,7 +735,7 @@ float* vec2_perp(float * restrict dst_xy, float const * restrict src_xy);
 /// @param a_xyz The first source vector.
 /// @param b_xyz The second source vector.
 /// @return The pointer dst_xyz.
-float* vec3_cross(float * restrict dst_xyz, float const * restrict a_xyz, float const * restrict b_xyz);
+float* vec3_cross(float * __restrict dst_xyz, float const * __restrict a_xyz, float const * __restrict b_xyz);
 
 /// @summary Calculates the cross product of two vectors, producing a third
 /// vector that is orthogonal to the source vectors; the dot product of the
@@ -746,7 +746,7 @@ float* vec3_cross(float * restrict dst_xyz, float const * restrict a_xyz, float 
 /// @param a_xyzw The first source vector.
 /// @param b_xyzw The second source vector.
 /// @return The pointer dst_xyzw.
-float* vec4_cross(float * restrict dst_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw);
+float* vec4_cross(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw);
 
 /// @summary Performs a swizzle operation on a vector or point value to select
 /// or change the order of components.
@@ -757,7 +757,7 @@ float* vec4_cross(float * restrict dst_xyzw, float const * restrict a_xyzw, floa
 /// @param y The zero-based index of the source component that will be written
 /// to the destination value at index 1.
 /// @return The pointer dst_xy.
-float* vec2_swizzle(float * restrict dst_xy, float const * restrict src_xy, size_t x, size_t y);
+float* vec2_swizzle(float * __restrict dst_xy, float const * __restrict src_xy, size_t x, size_t y);
 
 /// @summary Performs a swizzle operation on a vector or point value to select
 /// or change the order of components.
@@ -770,7 +770,7 @@ float* vec2_swizzle(float * restrict dst_xy, float const * restrict src_xy, size
 /// @param z The zero-based index of the source component that will be written
 /// to the destination value at index 2.
 /// @return The pointer dst_xyz.
-float* vec3_swizzle(float * restrict dst_xyz, float const * restrict src_xyz, size_t x, size_t y, size_t z);
+float* vec3_swizzle(float * __restrict dst_xyz, float const * __restrict src_xyz, size_t x, size_t y, size_t z);
 
 /// @summary Performs a swizzle operation on a vector or point value to select
 /// or change the order of components.
@@ -785,7 +785,7 @@ float* vec3_swizzle(float * restrict dst_xyz, float const * restrict src_xyz, si
 /// @param w The zero-based index of the source component that will be written
 /// to the destination value at index 3.
 /// @return The pointer dst_xyzw.
-float* vec4_swizzle(float * restrict dst_xyzw, float const * restrict src_xyzw, size_t x, size_t y, size_t z, size_t w);
+float* vec4_swizzle(float * __restrict dst_xyzw, float const * __restrict src_xyzw, size_t x, size_t y, size_t z, size_t w);
 
 /// @summary Performs componentwise linear interpolation between two vector or point quantities.
 /// @param dst_xy Pointer to the destination storage.
@@ -793,7 +793,7 @@ float* vec4_swizzle(float * restrict dst_xyzw, float const * restrict src_xyzw, 
 /// @param b_xy The value at @a t = 1.
 /// @param t A value in the range [0, 1] specifying the interpolation parameter.
 /// @return The pointer dst_xy.
-float* vec2_linear(float * restrict dst_xy, float const * restrict a_xy, float const * restrict b_xy, float t);
+float* vec2_linear(float * __restrict dst_xy, float const * __restrict a_xy, float const * __restrict b_xy, float t);
 
 /// @summary Performs componentwise linear interpolation between two vector or point quantities.
 /// @param dst_xyz Pointer to the destination storage.
@@ -801,7 +801,7 @@ float* vec2_linear(float * restrict dst_xy, float const * restrict a_xy, float c
 /// @param b_xyz The value at @a t = 1.
 /// @param t A value in the range [0, 1] specifying the interpolation parameter.
 /// @return The pointer dst_xyz.
-float* vec3_linear(float * restrict dst_xyz, float const * restrict a_xyz, float const * restrict b_xyz, float t);
+float* vec3_linear(float * __restrict dst_xyz, float const * __restrict a_xyz, float const * __restrict b_xyz, float t);
 
 /// @summary Performs componentwise linear interpolation between two vector or point quantities.
 /// @param dst_xyzw Pointer to the destination storage.
@@ -809,7 +809,7 @@ float* vec3_linear(float * restrict dst_xyz, float const * restrict a_xyz, float
 /// @param b_xyzw The value at @a t = 1.
 /// @param t A value in the range [0, 1] specifying the interpolation parameter.
 /// @return The pointer dst_xyzw.
-float* vec4_linear(float * restrict dst_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw, float t);
+float* vec4_linear(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw, float t);
 
 /// @summary Performs componentwise linear interpolation between two vector or
 /// point quantities. Only the first three components are interpolated.
@@ -818,7 +818,7 @@ float* vec4_linear(float * restrict dst_xyzw, float const * restrict a_xyzw, flo
 /// @param b_xyzw The value at @a t = 1.
 /// @param t A value in the range [0, 1] specifying the interpolation parameter.
 /// @return The pointer dst_xyzw.
-float* vec4_linear3(float * restrict dst_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw, float t);
+float* vec4_linear3(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw, float t);
 
 /// @summary Performs componentwise Bezier interpolation between two vector or point quantities.
 /// @param dst_xy Pointer to the destination storage.
@@ -829,11 +829,11 @@ float* vec4_linear3(float * restrict dst_xyzw, float const * restrict a_xyzw, fl
 /// @param t A value in the range [0, 1] specifying the interpolation parameter.
 /// @return The pointer dst_xy.
 float* vec2_bezier(
-    float       * restrict dst_xy,
-    float const * restrict a_xy,
-    float const * restrict b_xy,
-    float const * restrict itan_xy,
-    float const * restrict otan_xy,
+    float       * __restrict dst_xy,
+    float const * __restrict a_xy,
+    float const * __restrict b_xy,
+    float const * __restrict itan_xy,
+    float const * __restrict otan_xy,
     float                  t);
 
 /// @summary Performs componentwise Bezier interpolation between two vector or point quantities.
@@ -845,11 +845,11 @@ float* vec2_bezier(
 /// @param t A value in the range [0, 1] specifying the interpolation parameter.
 /// @return The pointer dst_xyz.
 float* vec3_bezier(
-    float       * restrict dst_xyz,
-    float const * restrict a_xyz,
-    float const * restrict b_xyz,
-    float const * restrict itan_xyz,
-    float const * restrict otan_xyz,
+    float       * __restrict dst_xyz,
+    float const * __restrict a_xyz,
+    float const * __restrict b_xyz,
+    float const * __restrict itan_xyz,
+    float const * __restrict otan_xyz,
     float                  t);
 
 /// @summary Performs componentwise Bezier interpolation between two vector or point quantities.
@@ -861,11 +861,11 @@ float* vec3_bezier(
 /// @param t A value in the range [0, 1] specifying the interpolation parameter.
 /// @return The pointer dst_xyzw.
 float* vec4_bezier(
-    float       * restrict dst_xyzw,
-    float const * restrict a_xyzw,
-    float const * restrict b_xyzw,
-    float const * restrict itan_xyzw,
-    float const * restrict otan_xyzw,
+    float       * __restrict dst_xyzw,
+    float const * __restrict a_xyzw,
+    float const * __restrict b_xyzw,
+    float const * __restrict itan_xyzw,
+    float const * __restrict otan_xyzw,
     float                  t);
 
 /// @summary Performs componentwise Bezier interpolation between two vector or
@@ -878,11 +878,11 @@ float* vec4_bezier(
 /// @param t A value in the range [0, 1] specifying the interpolation parameter.
 /// @return The pointer dst_xyzw.
 float* vec4_bezier3(
-    float       * restrict dst_xyzw,
-    float const * restrict a_xyzw,
-    float const * restrict b_xyzw,
-    float const * restrict itan_xyz,
-    float const * restrict otan_xyz,
+    float       * __restrict dst_xyzw,
+    float const * __restrict a_xyzw,
+    float const * __restrict b_xyzw,
+    float const * __restrict itan_xyz,
+    float const * __restrict otan_xyz,
     float                  t);
 
 /// @summary Performs componentwise Hermite interpolation between two vector or point quantities.
@@ -894,11 +894,11 @@ float* vec4_bezier3(
 /// @param t A value in the range [0, 1] specifying the interpolation parameter.
 /// @return The pointer dst_xy.
 float* vec2_hermite(
-    float       * restrict dst_xy,
-    float const * restrict a_xy,
-    float const * restrict b_xy,
-    float const * restrict itan_xy,
-    float const * restrict otan_xy,
+    float       * __restrict dst_xy,
+    float const * __restrict a_xy,
+    float const * __restrict b_xy,
+    float const * __restrict itan_xy,
+    float const * __restrict otan_xy,
     float                  t);
 
 /// @summary Performs componentwise Hermite interpolation between two vector or point quantities.
@@ -910,11 +910,11 @@ float* vec2_hermite(
 /// @param t A value in the range [0, 1] specifying the interpolation parameter.
 /// @return The pointer dst_xyz.
 float* vec3_hermite(
-    float       * restrict dst_xyz,
-    float const * restrict a_xyz,
-    float const * restrict b_xyz,
-    float const * restrict itan_xyz,
-    float const * restrict otan_xyz,
+    float       * __restrict dst_xyz,
+    float const * __restrict a_xyz,
+    float const * __restrict b_xyz,
+    float const * __restrict itan_xyz,
+    float const * __restrict otan_xyz,
     float                  t);
 
 /// @summary Performs componentwise Hermite interpolation between two vector or point quantities.
@@ -926,11 +926,11 @@ float* vec3_hermite(
 /// @param t A value in the range [0, 1] specifying the interpolation parameter.
 /// @return The pointer dst_xyzw.
 float* vec4_hermite(
-    float       * restrict dst_xyzw,
-    float const * restrict a_xyzw,
-    float const * restrict b_xyzw,
-    float const * restrict itan_xyzw,
-    float const * restrict otan_xyzw,
+    float       * __restrict dst_xyzw,
+    float const * __restrict a_xyzw,
+    float const * __restrict b_xyzw,
+    float const * __restrict itan_xyzw,
+    float const * __restrict otan_xyzw,
     float                      t);
 
 /// @summary Performs componentwise Hermite interpolation between two vector or
@@ -943,76 +943,76 @@ float* vec4_hermite(
 /// @param t A value in the range [0, 1] specifying the interpolation parameter.
 /// @return The pointer dst_xyzw.
 float* vec4_hermite3(
-    float       * restrict dst_xyzw,
-    float const * restrict a_xyzw,
-    float const * restrict b_xyzw,
-    float const * restrict itan_xyz,
-    float const * restrict otan_xyz,
+    float       * __restrict dst_xyzw,
+    float const * __restrict a_xyzw,
+    float const * __restrict b_xyzw,
+    float const * __restrict itan_xyz,
+    float const * __restrict otan_xyz,
     float                  t);
 
 float* quat_set_xyzw(float *dst_xyzw, float x, float y, float z, float w);
-float* quat_set_quat(float * restrict dst_xyzw, float const * restrict src_xyzw);
+float* quat_set_quat(float * __restrict dst_xyzw, float const * __restrict src_xyzw);
 float* quat_set_nan(float *dst_xyzw);
 float* quat_set_one(float *dst_xyzw);
 float* quat_set_zero(float *dst_xyzw);
 float* quat_set_ninf(float *dst_xyzw);
 float* quat_set_pinf(float *dst_xyzw);
 float* quat_set_ident(float *dst_xyzw);
-bool   quat_eq(float const * restrict a_xyzw, float const * restrict b_xyzw);
-float* quat_add(float * restrict dst_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw);
-float* quat_sub(float * restrict dst_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw);
-float* quat_mul(float * restrict dst_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw);
-float* quat_scl(float * restrict dst_xyzw, float const * restrict a_xyzw, float b);
-float* quat_scl3(float * restrict dst_xyzw, float const * restrict a_xyzw, float b);
-float* quat_neg(float * restrict dst_xyzw, float const * restrict src_xyzw);
-float* quat_neg3(float * restrict dst_xyzw, float const * restrict src_xyzw);
-float* quat_conj(float * restrict dst_xyzw, float const * restrict src_xyzw);
-float  quat_dot(float const * restrict a_xyzw, float const * restrict b_xyzw);
+bool   quat_eq(float const * __restrict a_xyzw, float const * __restrict b_xyzw);
+float* quat_add(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw);
+float* quat_sub(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw);
+float* quat_mul(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw);
+float* quat_scl(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float b);
+float* quat_scl3(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float b);
+float* quat_neg(float * __restrict dst_xyzw, float const * __restrict src_xyzw);
+float* quat_neg3(float * __restrict dst_xyzw, float const * __restrict src_xyzw);
+float* quat_conj(float * __restrict dst_xyzw, float const * __restrict src_xyzw);
+float  quat_dot(float const * __restrict a_xyzw, float const * __restrict b_xyzw);
 float  quat_norm(float const *src_xyzw);
 float  quat_len(float const *src_xyzw);
 float  quat_len_sq(float const *src_xyzw);
 float  quat_sel(float const *src_xyzw);
-float* quat_inv(float * restrict dst_xyzw, float const * restrict src_xyzw);
-float* quat_nrm(float * restrict dst_xyzw, float const * restrict src_xyzw);
-float* quat_exp(float * restrict dst_xyzw, float const * restrict src_xyzw);
-float* quat_log(float * restrict dst_xyzw, float const * restrict src_xyzw);
-float* quat_closest(float * restrict dst_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw);
-float* quat_orient_vec3(float *restrict dst_xyzw, float const * restrict from_xyz, float const * restrict to_xyz);
-float* quat_orient_vec4(float * restrict dst_xyzw, float const * restrict from_xyzw, float const * restrict to_xyzw);
-float* quat_set_mat4(float * restrict dst_xyzw, float const * restrict m16);
-float* quat_set_euler_degree(float * restrict dst_xyzw, float deg_x, float deg_y, float deg_z);
-float* quat_set_euler_radian(float * restrict dst_xyzw, float rad_x, float rad_y, float rad_z);
-float* quat_set_angle_axis_degree_n(float * restrict dst_xyzw, float angle_deg, float const * restrict axis_xyz);
-float* quat_set_angle_axis_radian_n(float * restrict dst_xyzw, float angle_rad, float const * restrict axis_xyz);
-float* quat_set_angle_axis_degree_u(float * restrict dst_xyzw, float angle_deg, float const * restrict axis_xyz);
-float* quat_set_angle_axis_radian_u(float * restrict dst_xyzw, float angle_rad, float const * restrict axis_xyz);
-float* quat_linear(float * restrict dst_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw, float t);
-float* quat_slerp(float * restrict dst_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw, float t);
-float* quat_squad(float * restrict dst_xyzw, float const * restrict p_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw, float const * restrict q_xyzw, float t);
-float* quat_spline(float * restrict dst_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw, float const * restrict c_xyzw);
+float* quat_inv(float * __restrict dst_xyzw, float const * __restrict src_xyzw);
+float* quat_nrm(float * __restrict dst_xyzw, float const * __restrict src_xyzw);
+float* quat_exp(float * __restrict dst_xyzw, float const * __restrict src_xyzw);
+float* quat_log(float * __restrict dst_xyzw, float const * __restrict src_xyzw);
+float* quat_closest(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw);
+float* quat_orient_vec3(float *__restrict dst_xyzw, float const * __restrict from_xyz, float const * __restrict to_xyz);
+float* quat_orient_vec4(float * __restrict dst_xyzw, float const * __restrict from_xyzw, float const * __restrict to_xyzw);
+float* quat_set_mat4(float * __restrict dst_xyzw, float const * __restrict m16);
+float* quat_set_euler_degree(float * __restrict dst_xyzw, float deg_x, float deg_y, float deg_z);
+float* quat_set_euler_radian(float * __restrict dst_xyzw, float rad_x, float rad_y, float rad_z);
+float* quat_set_angle_axis_degree_n(float * __restrict dst_xyzw, float angle_deg, float const * __restrict axis_xyz);
+float* quat_set_angle_axis_radian_n(float * __restrict dst_xyzw, float angle_rad, float const * __restrict axis_xyz);
+float* quat_set_angle_axis_degree_u(float * __restrict dst_xyzw, float angle_deg, float const * __restrict axis_xyz);
+float* quat_set_angle_axis_radian_u(float * __restrict dst_xyzw, float angle_rad, float const * __restrict axis_xyz);
+float* quat_linear(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw, float t);
+float* quat_slerp(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw, float t);
+float* quat_squad(float * __restrict dst_xyzw, float const * __restrict p_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw, float const * __restrict q_xyzw, float t);
+float* quat_spline(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw, float const * __restrict c_xyzw);
 
 float* mat4_set(float *dst16, float  r0c0, float r0c1, float r0c2, float r0c3, float  r1c0, float r1c1, float r1c2, float r1c3, float  r2c0, float r2c1, float r2c2, float r2c3, float  r3c0, float r3c1, float r3c2, float r3c3);
-float* mat4_set_mat4(float * restrict dst16, float const * restrict src16);
+float* mat4_set_mat4(float * __restrict dst16, float const * __restrict src16);
 float* mat4_set_nan(float *dst16);
 float* mat4_set_one(float *dst16);
 float* mat4_set_zero(float *dst16);
 float* mat4_set_ninf(float *dst16);
 float* mat4_set_pinf(float *dst16);
 float* mat4_set_ident(float *dst16);
-bool   mat4_eq(float const * restrict a16, float const * restrict b16);
+bool   mat4_eq(float const * __restrict a16, float const * __restrict b16);
 bool   mat4_is_identity(float const *src16);
-float* mat4_set_rows(float * restrict dst16, float const * restrict r0_xyzw, float const * restrict r1_xyzw, float const * restrict r2_xyzw, float const * restrict r3_xyzw);
-float* mat4_set_cols(float * restrict dst16, float const * restrict c0_xyzw, float const * restrict c1_xyzw, float const * restrict c2_xyzw, float const * restrict c3_xyzw);
-float* mat4_get_row(float * restrict dst_xyzw, size_t row, float const *restrict src16);
-float* mat4_set_row(float * restrict dst16, size_t row, float const *restrict src_xyzw);
-float* mat4_get_col(float * restrict dst_xyzw, size_t col, float const *restrict src16);
-float* mat4_set_col(float * restrict dst16, size_t col, float const * restrict src_xyzw);
+float* mat4_set_rows(float * __restrict dst16, float const * __restrict r0_xyzw, float const * __restrict r1_xyzw, float const * __restrict r2_xyzw, float const * __restrict r3_xyzw);
+float* mat4_set_cols(float * __restrict dst16, float const * __restrict c0_xyzw, float const * __restrict c1_xyzw, float const * __restrict c2_xyzw, float const * __restrict c3_xyzw);
+float* mat4_get_row(float * __restrict dst_xyzw, size_t row, float const *__restrict src16);
+float* mat4_set_row(float * __restrict dst16, size_t row, float const *__restrict src_xyzw);
+float* mat4_get_col(float * __restrict dst_xyzw, size_t col, float const *__restrict src16);
+float* mat4_set_col(float * __restrict dst16, size_t col, float const * __restrict src_xyzw);
 float  mat4_trace(float const *src16);
 float  mat4_det(float const *src16);
-float* mat4_transpose(float * restrict dst16, float const * restrict src16);
-float* mat4_concat(float * restrict dst16, float const * restrict a16, float const * restrict b16);
-float* mat4_inv_affine(float * restrict dst16, float const * restrict src16);
-float* mat4_set_quat(float * restrict dst16, float const * restrict src_xyzw);
+float* mat4_transpose(float * __restrict dst16, float const * __restrict src16);
+float* mat4_concat(float * __restrict dst16, float const * __restrict a16, float const * __restrict b16);
+float* mat4_inv_affine(float * __restrict dst16, float const * __restrict src16);
+float* mat4_set_quat(float * __restrict dst16, float const * __restrict src_xyzw);
 float* mat4_set_euler_degree_x(float *dst16, float deg_x);
 float* mat4_set_euler_radian_x(float *dst16, float rad_x);
 float* mat4_set_euler_degree_y(float *dst16, float deg_y);
@@ -1021,27 +1021,27 @@ float* mat4_set_euler_degree_z(float *dst16, float deg_z);
 float* mat4_set_euler_radian_z(float *dst16, float rad_z);
 float* mat4_set_euler_degree(float *dst16, float deg_x, float deg_y, float deg_z);
 float* mat4_set_euler_radian(float *dst16, float rad_x, float rad_y, float rad_z);
-float* mat4_set_angle_axis_degree_n(float * restrict dst16, float angle_deg, float const * restrict axis_xyz);
-float* mat4_set_angle_axis_radian_n(float * restrict dst16, float angle_rad, float const * restrict axis_xyz);
-float* mat4_set_angle_axis_degree_u(float * restrict dst16, float angle_deg, float const * restrict axis_xyz);
-float* mat4_set_angle_axis_radian_u(float * restrict dst16, float angle_rad, float const * restrict axis_xyz);
-float* mat4_look_at(float * restrict dst16, float const * restrict pos_xyz, float const * restrict target_xyz, float const * restrict up_xyz);
+float* mat4_set_angle_axis_degree_n(float * __restrict dst16, float angle_deg, float const * __restrict axis_xyz);
+float* mat4_set_angle_axis_radian_n(float * __restrict dst16, float angle_rad, float const * __restrict axis_xyz);
+float* mat4_set_angle_axis_degree_u(float * __restrict dst16, float angle_deg, float const * __restrict axis_xyz);
+float* mat4_set_angle_axis_radian_u(float * __restrict dst16, float angle_rad, float const * __restrict axis_xyz);
+float* mat4_look_at(float * __restrict dst16, float const * __restrict pos_xyz, float const * __restrict target_xyz, float const * __restrict up_xyz);
 float* mat4_scale(float *dst16, float scale_x, float scale_y, float scale_z);
 float* mat4_trans(float *dst16, float trans_x, float trans_y, float trans_z);
 float* mat4_ortho(float *dst16, float left, float right, float bottom, float top, float near, float far);
 float* mat4_persp_degree(float *dst16, float fov_deg, float aspect, float near, float far);
 float* mat4_persp_radian(float *dst16, float fov_rad, float aspect, float near, float far);
 float* mat4_2d(float *dst16, float width, float height);
-void   mat4_extract_frustum_n(float * restrict left_xyzD, float * restrict right_xyzD, float * restrict top_xyzD, float * restrict bottom_xyzD, float * restrict near_xyzD, float * restrict far_xyzD, float const * restrict proj16);
-void   mat4_extract_frustum_u(float * restrict left_xyzD, float * restrict right_xyzD, float * restrict top_xyzD, float * restrict bottom_xyzD, float * restrict near_xyzD, float * restrict far_xyzD, float const * restrict proj16);
-float* mat4_transform_vec3(float * restrict dst_xyz, float const * restrict src_xyz, float const * restrict t16);
-float* mat4_transform_vec4(float * restrict dst_xyzw, float const * restrict src_xyzw, float const * restrict t16);
-float* mat4_transform_point(float * restrict dst_xyz, float const * restrict src_xyz, float const * restrict t16);
-float* mat4_transform_vector(float * restrict dst_xyz, float const * restrict src_xyz, float const * restrict t16);
-float* mat4_transform_array_vec3(float * restrict dst_xyz, float const * restrict src_xyz, float const * restrict t16, size_t count);
-float* mat4_transform_array_vec4(float * restrict dst_xyzw, float const * restrict src_xyzw, float const * restrict t16, size_t count);
-float* mat4_transform_array_point(float * restrict dst_xyz, float const * restrict src_xyz, float const * restrict t16, size_t count);
-float* mat4_transform_array_vector(float * restrict dst_xyz, float const * restrict src_xyz, float const * restrict t16, size_t count);
+void   mat4_extract_frustum_n(float * __restrict left_xyzD, float * __restrict right_xyzD, float * __restrict top_xyzD, float * __restrict bottom_xyzD, float * __restrict near_xyzD, float * __restrict far_xyzD, float const * __restrict proj16);
+void   mat4_extract_frustum_u(float * __restrict left_xyzD, float * __restrict right_xyzD, float * __restrict top_xyzD, float * __restrict bottom_xyzD, float * __restrict near_xyzD, float * __restrict far_xyzD, float const * __restrict proj16);
+float* mat4_transform_vec3(float * __restrict dst_xyz, float const * __restrict src_xyz, float const * __restrict t16);
+float* mat4_transform_vec4(float * __restrict dst_xyzw, float const * __restrict src_xyzw, float const * __restrict t16);
+float* mat4_transform_point(float * __restrict dst_xyz, float const * __restrict src_xyz, float const * __restrict t16);
+float* mat4_transform_vector(float * __restrict dst_xyz, float const * __restrict src_xyz, float const * __restrict t16);
+float* mat4_transform_array_vec3(float * __restrict dst_xyz, float const * __restrict src_xyz, float const * __restrict t16, size_t count);
+float* mat4_transform_array_vec4(float * __restrict dst_xyzw, float const * __restrict src_xyzw, float const * __restrict t16, size_t count);
+float* mat4_transform_array_point(float * __restrict dst_xyz, float const * __restrict src_xyz, float const * __restrict t16, size_t count);
+float* mat4_transform_array_vector(float * __restrict dst_xyz, float const * __restrict src_xyz, float const * __restrict t16, size_t count);
 
 /// Determine the smallest representable value for a given integer type.
 /// @return The smallest representable value for a given integer type.

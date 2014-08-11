@@ -80,6 +80,7 @@
         #define BACKEND_TARGET_PLATFORM    BACKEND_PLATFORM_WP8
         #define BACKEND_CALL_C             __cdecl
     #else
+        #undef  BACKEND_TARGET_PLATFORM
         #define BACKEND_TARGET_PLATFORM    BACKEND_PLATFORM_WIN32
         #define BACKEND_CALL_C             __cdecl
     #endif
@@ -183,11 +184,9 @@
 #ifndef BACKEND_RESTRICT
     #ifdef _MSC_VER
         #define BACKEND_RESTRICT           __restrict
-        #define restrict                   __restrict
     #endif /* defined(_MSC_VER) */
     #ifdef __GNUC__
         #define BACKEND_RESTRICT           __restrict
-        #define restrict                   __restrict
     #endif /* defined(__GNUC__) */
 #endif /*!defined(BACKEND_RESTRICT) */
 

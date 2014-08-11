@@ -11,8 +11,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "common.hpp"
-#include "platform.hpp"
 #include "display.hpp"
 
 /*/////////////////

@@ -350,21 +350,21 @@ float* vec2_set_xy(float *dst_xy, float x, float y)
     return dst_xy;
 }
 
-float* vec2_set_vec2(float * restrict dst_xy, float const * restrict src_xy)
+float* vec2_set_vec2(float * __restrict dst_xy, float const * __restrict src_xy)
 {
     dst_xy[0] = src_xy[0];
     dst_xy[1] = src_xy[1];
     return dst_xy;
 }
 
-float* vec2_set_vec3(float * restrict dst_xy, float const * restrict src_xyz)
+float* vec2_set_vec3(float * __restrict dst_xy, float const * __restrict src_xyz)
 {
     dst_xy[0] = src_xyz[0];
     dst_xy[1] = src_xyz[1];
     return dst_xy;
 }
 
-float* vec2_set_vec4(float * restrict dst_xy, float const * restrict src_xyzw)
+float* vec2_set_vec4(float * __restrict dst_xy, float const * __restrict src_xyzw)
 {
     dst_xy[0] = src_xyzw[0];
     dst_xy[1] = src_xyzw[1];
@@ -379,7 +379,7 @@ float* vec3_set_xyz(float *dst_xyz, float x, float y, float z)
     return dst_xyz;
 }
 
-float* vec3_set_vec2(float * restrict dst_xyz, float const * restrict src_xy, float z)
+float* vec3_set_vec2(float * __restrict dst_xyz, float const * __restrict src_xy, float z)
 {
     dst_xyz[0] = src_xy[0];
     dst_xyz[1] = src_xy[1];
@@ -387,7 +387,7 @@ float* vec3_set_vec2(float * restrict dst_xyz, float const * restrict src_xy, fl
     return dst_xyz;
 }
 
-float* vec3_set_vec3(float * restrict dst_xyz, float const * restrict src_xyz)
+float* vec3_set_vec3(float * __restrict dst_xyz, float const * __restrict src_xyz)
 {
     dst_xyz[0] = src_xyz[0];
     dst_xyz[1] = src_xyz[1];
@@ -395,7 +395,7 @@ float* vec3_set_vec3(float * restrict dst_xyz, float const * restrict src_xyz)
     return dst_xyz;
 }
 
-float* vec3_set_vec4(float * restrict dst_xyz, float const * restrict src_xyzw)
+float* vec3_set_vec4(float * __restrict dst_xyz, float const * __restrict src_xyzw)
 {
     dst_xyz[0] = src_xyzw[0];
     dst_xyz[1] = src_xyzw[1];
@@ -412,7 +412,7 @@ float* vec4_set(float *dst_xyzw, float x, float y, float z, float w)
     return dst_xyzw;
 }
 
-float* vec4_set_vec2(float * restrict dst_xyzw, float const * restrict src_xy, float z, float w)
+float* vec4_set_vec2(float * __restrict dst_xyzw, float const * __restrict src_xy, float z, float w)
 {
     dst_xyzw[0] = src_xy[0];
     dst_xyzw[1] = src_xy[1];
@@ -421,7 +421,7 @@ float* vec4_set_vec2(float * restrict dst_xyzw, float const * restrict src_xy, f
     return dst_xyzw;
 }
 
-float* vec4_set_vec3(float * restrict dst_xyzw, float const * restrict src_xyz, float w)
+float* vec4_set_vec3(float * __restrict dst_xyzw, float const * __restrict src_xyz, float w)
 {
     dst_xyzw[0] = src_xyz[0];
     dst_xyzw[1] = src_xyz[1];
@@ -430,7 +430,7 @@ float* vec4_set_vec3(float * restrict dst_xyzw, float const * restrict src_xyz, 
     return dst_xyzw;
 }
 
-float* vec4_set_vec4(float * restrict dst_xyzw, float const * restrict src_xyzw)
+float* vec4_set_vec4(float * __restrict dst_xyzw, float const * __restrict src_xyzw)
 {
     dst_xyzw[0] = src_xyzw[0];
     dst_xyzw[1] = src_xyzw[1];
@@ -642,14 +642,14 @@ float* vec4_set_unit_w(float *dst_xyzw)
     return dst_xyzw;
 }
 
-bool vec2_eq(float const * restrict a_xy, float const * restrict b_xy)
+bool vec2_eq(float const * __restrict a_xy, float const * __restrict b_xy)
 {
     if (!eq(a_xy[0], b_xy[0])) return false;
     if (!eq(a_xy[1], b_xy[1])) return false;
     return true;
 }
 
-bool vec3_eq(float const * restrict a_xyz, float const * restrict b_xyz)
+bool vec3_eq(float const * __restrict a_xyz, float const * __restrict b_xyz)
 {
     if (!eq(a_xyz[0], b_xyz[0])) return false;
     if (!eq(a_xyz[1], b_xyz[1])) return false;
@@ -657,7 +657,7 @@ bool vec3_eq(float const * restrict a_xyz, float const * restrict b_xyz)
     return true;
 }
 
-bool vec4_eq(float const * restrict a_xyzw, float const * restrict b_xyzw)
+bool vec4_eq(float const * __restrict a_xyzw, float const * __restrict b_xyzw)
 {
     if (!eq(a_xyzw[0], b_xyzw[0])) return false;
     if (!eq(a_xyzw[1], b_xyzw[1])) return false;
@@ -666,14 +666,14 @@ bool vec4_eq(float const * restrict a_xyzw, float const * restrict b_xyzw)
     return true;
 }
 
-float* vec2_add(float * restrict dst_xy, float const * restrict a_xy, float const * restrict b_xy)
+float* vec2_add(float * __restrict dst_xy, float const * __restrict a_xy, float const * __restrict b_xy)
 {
     dst_xy[0] = a_xy[0] + b_xy[0];
     dst_xy[1] = a_xy[1] + b_xy[1];
     return dst_xy;
 }
 
-float* vec3_add(float * restrict dst_xyz, float const * restrict a_xyz, float const * restrict b_xyz)
+float* vec3_add(float * __restrict dst_xyz, float const * __restrict a_xyz, float const * __restrict b_xyz)
 {
     dst_xyz[0] = a_xyz[0] + b_xyz[0];
     dst_xyz[1] = a_xyz[1] + b_xyz[1];
@@ -681,7 +681,7 @@ float* vec3_add(float * restrict dst_xyz, float const * restrict a_xyz, float co
     return dst_xyz;
 }
 
-float* vec4_add(float * restrict dst_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw)
+float* vec4_add(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw)
 {
     dst_xyzw[0] = a_xyzw[0] + b_xyzw[0];
     dst_xyzw[1] = a_xyzw[1] + b_xyzw[1];
@@ -690,14 +690,14 @@ float* vec4_add(float * restrict dst_xyzw, float const * restrict a_xyzw, float 
     return dst_xyzw;
 }
 
-float* vec2_sub(float * restrict dst_xy, float const * restrict a_xy, float const * restrict b_xy)
+float* vec2_sub(float * __restrict dst_xy, float const * __restrict a_xy, float const * __restrict b_xy)
 {
     dst_xy[0] = a_xy[0] - b_xy[0];
     dst_xy[1] = a_xy[1] - b_xy[1];
     return dst_xy;
 }
 
-float* vec3_sub(float * restrict dst_xyz, float const * restrict a_xyz, float const * restrict b_xyz)
+float* vec3_sub(float * __restrict dst_xyz, float const * __restrict a_xyz, float const * __restrict b_xyz)
 {
     dst_xyz[0] = a_xyz[0] - b_xyz[0];
     dst_xyz[1] = a_xyz[1] - b_xyz[1];
@@ -705,7 +705,7 @@ float* vec3_sub(float * restrict dst_xyz, float const * restrict a_xyz, float co
     return dst_xyz;
 }
 
-float* vec4_sub(float * restrict dst_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw)
+float* vec4_sub(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw)
 {
     dst_xyzw[0] = a_xyzw[0] - b_xyzw[0];
     dst_xyzw[1] = a_xyzw[1] - b_xyzw[1];
@@ -714,14 +714,14 @@ float* vec4_sub(float * restrict dst_xyzw, float const * restrict a_xyzw, float 
     return dst_xyzw;
 }
 
-float* vec2_mul(float * restrict dst_xy, float const * restrict a_xy, float const * restrict b_xy)
+float* vec2_mul(float * __restrict dst_xy, float const * __restrict a_xy, float const * __restrict b_xy)
 {
     dst_xy[0] = a_xy[0] * b_xy[0];
     dst_xy[1] = a_xy[1] * b_xy[1];
     return dst_xy;
 }
 
-float* vec3_mul(float * restrict dst_xyz, float const * restrict a_xyz, float const * restrict b_xyz)
+float* vec3_mul(float * __restrict dst_xyz, float const * __restrict a_xyz, float const * __restrict b_xyz)
 {
     dst_xyz[0] = a_xyz[0] * b_xyz[0];
     dst_xyz[1] = a_xyz[1] * b_xyz[1];
@@ -729,7 +729,7 @@ float* vec3_mul(float * restrict dst_xyz, float const * restrict a_xyz, float co
     return dst_xyz;
 }
 
-float* vec4_mul(float * restrict dst_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw)
+float* vec4_mul(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw)
 {
     dst_xyzw[0] = a_xyzw[0] * b_xyzw[0];
     dst_xyzw[1] = a_xyzw[1] * b_xyzw[1];
@@ -738,14 +738,14 @@ float* vec4_mul(float * restrict dst_xyzw, float const * restrict a_xyzw, float 
     return dst_xyzw;
 }
 
-float* vec2_div(float * restrict dst_xy, float const * restrict a_xy, float const * restrict b_xy)
+float* vec2_div(float * __restrict dst_xy, float const * __restrict a_xy, float const * __restrict b_xy)
 {
     dst_xy[0] = a_xy[0] / b_xy[0];
     dst_xy[1] = a_xy[1] / b_xy[1];
     return dst_xy;
 }
 
-float* vec3_div(float * restrict dst_xyz, float const * restrict a_xyz, float const * restrict b_xyz)
+float* vec3_div(float * __restrict dst_xyz, float const * __restrict a_xyz, float const * __restrict b_xyz)
 {
     dst_xyz[0] = a_xyz[0] / b_xyz[0];
     dst_xyz[1] = a_xyz[1] / b_xyz[1];
@@ -753,7 +753,7 @@ float* vec3_div(float * restrict dst_xyz, float const * restrict a_xyz, float co
     return dst_xyz;
 }
 
-float* vec4_div(float * restrict dst_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw)
+float* vec4_div(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw)
 {
     dst_xyzw[0] = a_xyzw[0] / b_xyzw[0];
     dst_xyzw[1] = a_xyzw[1] / b_xyzw[1];
@@ -762,14 +762,14 @@ float* vec4_div(float * restrict dst_xyzw, float const * restrict a_xyzw, float 
     return dst_xyzw;
 }
 
-float* vec2_scl(float * restrict dst_xy, float const * restrict a_xy, float b)
+float* vec2_scl(float * __restrict dst_xy, float const * __restrict a_xy, float b)
 {
     dst_xy[0] = a_xy[0] * b;
     dst_xy[1] = a_xy[1] * b;
     return dst_xy;
 }
 
-float* vec3_scl(float * restrict dst_xyz, float const * restrict a_xyz, float b)
+float* vec3_scl(float * __restrict dst_xyz, float const * __restrict a_xyz, float b)
 {
     dst_xyz[0] = a_xyz[0] * b;
     dst_xyz[1] = a_xyz[1] * b;
@@ -777,7 +777,7 @@ float* vec3_scl(float * restrict dst_xyz, float const * restrict a_xyz, float b)
     return dst_xyz;
 }
 
-float* vec4_scl(float * restrict dst_xyzw, float const * restrict a_xyzw, float b)
+float* vec4_scl(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float b)
 {
     dst_xyzw[0] = a_xyzw[0] * b;
     dst_xyzw[1] = a_xyzw[1] * b;
@@ -786,7 +786,7 @@ float* vec4_scl(float * restrict dst_xyzw, float const * restrict a_xyzw, float 
     return dst_xyzw;
 }
 
-float* vec4_scl3(float * restrict dst_xyzw, float const * restrict a_xyzw, float b)
+float* vec4_scl3(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float b)
 {
     dst_xyzw[0] = a_xyzw[0] * b;
     dst_xyzw[1] = a_xyzw[1] * b;
@@ -795,14 +795,14 @@ float* vec4_scl3(float * restrict dst_xyzw, float const * restrict a_xyzw, float
     return dst_xyzw;
 }
 
-float* vec2_neg(float * restrict dst_xy, float const * restrict src_xy)
+float* vec2_neg(float * __restrict dst_xy, float const * __restrict src_xy)
 {
     dst_xy[0] = -src_xy[0];
     dst_xy[1] = -src_xy[1];
     return dst_xy;
 }
 
-float* vec3_neg(float * restrict dst_xyz, float const * restrict src_xyz)
+float* vec3_neg(float * __restrict dst_xyz, float const * __restrict src_xyz)
 {
     dst_xyz[0] = -src_xyz[0];
     dst_xyz[1] = -src_xyz[1];
@@ -810,7 +810,7 @@ float* vec3_neg(float * restrict dst_xyz, float const * restrict src_xyz)
     return dst_xyz;
 }
 
-float* vec4_neg(float * restrict dst_xyzw, float const * restrict src_xyzw)
+float* vec4_neg(float * __restrict dst_xyzw, float const * __restrict src_xyzw)
 {
     dst_xyzw[0] = -src_xyzw[0];
     dst_xyzw[1] = -src_xyzw[1];
@@ -819,7 +819,7 @@ float* vec4_neg(float * restrict dst_xyzw, float const * restrict src_xyzw)
     return dst_xyzw;
 }
 
-float* vec4_neg3(float * restrict dst_xyzw, float const * restrict src_xyzw)
+float* vec4_neg3(float * __restrict dst_xyzw, float const * __restrict src_xyzw)
 {
     dst_xyzw[0] = -src_xyzw[0];
     dst_xyzw[1] = -src_xyzw[1];
@@ -828,25 +828,25 @@ float* vec4_neg3(float * restrict dst_xyzw, float const * restrict src_xyzw)
     return dst_xyzw;
 }
 
-float vec2_dot(float &dst, float const * restrict a_xy, float const * restrict b_xy)
+float vec2_dot(float &dst, float const * __restrict a_xy, float const * __restrict b_xy)
 {
     dst = (a_xy[0] * b_xy[0] + a_xy[1] * b_xy[1]);
     return dst;
 }
 
-float vec3_dot(float &dst, float const * restrict a_xyz, float const * restrict b_xyz)
+float vec3_dot(float &dst, float const * __restrict a_xyz, float const * __restrict b_xyz)
 {
     dst = (a_xyz[0] * b_xyz[0] + a_xyz[1] * b_xyz[1] + a_xyz[2] * b_xyz[2]);
     return dst;
 }
 
-float vec4_dot(float &dst, float const * restrict a_xyzw, float const * restrict b_xyzw)
+float vec4_dot(float &dst, float const * __restrict a_xyzw, float const * __restrict b_xyzw)
 {
     dst = (a_xyzw[0] * b_xyzw[0] + a_xyzw[1] * b_xyzw[1] + a_xyzw[2] * b_xyzw[2] + a_xyzw[3] * b_xyzw[3]);
     return dst;
 }
 
-float vec4_dot3(float &dst, float const * restrict a_xyzw, float const * restrict b_xyzw)
+float vec4_dot3(float &dst, float const * __restrict a_xyzw, float const * __restrict b_xyzw)
 {
     dst = (a_xyzw[0] * b_xyzw[0] + a_xyzw[1] * b_xyzw[1] + a_xyzw[2] * b_xyzw[2]);
     return dst;
@@ -900,7 +900,7 @@ float vec4_len3_sq(float &dst, float const *a_xyzw)
     return dst;
 }
 
-float* vec2_nrm(float * restrict dst_xy, float const * restrict src_xy)
+float* vec2_nrm(float * __restrict dst_xy, float const * __restrict src_xy)
 {
     float len;
     if (!eq(vec2_len(len, src_xy), 0))
@@ -913,7 +913,7 @@ float* vec2_nrm(float * restrict dst_xy, float const * restrict src_xy)
     else return vec2_set_pinf(dst_xy);
 }
 
-float* vec3_nrm(float * restrict dst_xyz, float const * restrict src_xyz)
+float* vec3_nrm(float * __restrict dst_xyz, float const * __restrict src_xyz)
 {
     float len;
     if (!eq(vec3_len(len, src_xyz), 0))
@@ -927,7 +927,7 @@ float* vec3_nrm(float * restrict dst_xyz, float const * restrict src_xyz)
     else return vec3_set_pinf(dst_xyz);
 }
 
-float* vec4_nrm(float * restrict dst_xyzw, float const * restrict src_xyzw)
+float* vec4_nrm(float * __restrict dst_xyzw, float const * __restrict src_xyzw)
 {
     float len;
     if (!eq(vec4_len(len, src_xyzw), 0))
@@ -942,7 +942,7 @@ float* vec4_nrm(float * restrict dst_xyzw, float const * restrict src_xyzw)
     else return vec4_set_pinf(dst_xyzw);
 }
 
-float* vec4_nrm3(float * restrict dst_xyzw, float const * restrict src_xyzw)
+float* vec4_nrm3(float * __restrict dst_xyzw, float const * __restrict src_xyzw)
 {
     float len;
     if (!eq(vec4_len3(len, src_xyzw), 0))
@@ -962,7 +962,7 @@ float* vec4_nrm3(float * restrict dst_xyzw, float const * restrict src_xyzw)
     }
 }
 
-float* vec2_perp(float * restrict dst_xy, float const * restrict src_xy)
+float* vec2_perp(float * __restrict dst_xy, float const * __restrict src_xy)
 {
     float x   = src_xy[0];
     float y   = src_xy[1];
@@ -971,7 +971,7 @@ float* vec2_perp(float * restrict dst_xy, float const * restrict src_xy)
     return dst_xy;
 }
 
-float* vec3_cross(float * restrict dst_xyz, float const * restrict a_xyz, float const * restrict b_xyz)
+float* vec3_cross(float * __restrict dst_xyz, float const * __restrict a_xyz, float const * __restrict b_xyz)
 {
     float ax   = a_xyz[0], ay = a_xyz[1], az = a_xyz[2];
     float bx   = b_xyz[0], by = b_xyz[1], bz = b_xyz[2];
@@ -981,7 +981,7 @@ float* vec3_cross(float * restrict dst_xyz, float const * restrict a_xyz, float 
     return dst_xyz;
 }
 
-float* vec4_cross(float * restrict dst_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw)
+float* vec4_cross(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw)
 {
     float ax    = a_xyzw[0], ay = a_xyzw[1], az = a_xyzw[2];
     float bx    = b_xyzw[0], by = b_xyzw[1], bz = b_xyzw[2];
@@ -992,7 +992,7 @@ float* vec4_cross(float * restrict dst_xyzw, float const * restrict a_xyzw, floa
     return dst_xyzw;
 }
 
-float* vec2_swizzle(float * restrict dst_xy, float const * restrict src_xy, size_t x, size_t y)
+float* vec2_swizzle(float * __restrict dst_xy, float const * __restrict src_xy, size_t x, size_t y)
 {
     float a   = src_xy[x];
     float b   = src_xy[y];
@@ -1001,7 +1001,7 @@ float* vec2_swizzle(float * restrict dst_xy, float const * restrict src_xy, size
     return dst_xy;
 }
 
-float* vec3_swizzle(float * restrict dst_xyz, float const * restrict src_xyz, size_t x, size_t y, size_t z)
+float* vec3_swizzle(float * __restrict dst_xyz, float const * __restrict src_xyz, size_t x, size_t y, size_t z)
 {
     float a    = src_xyz[x];
     float b    = src_xyz[y];
@@ -1012,7 +1012,7 @@ float* vec3_swizzle(float * restrict dst_xyz, float const * restrict src_xyz, si
     return dst_xyz;
 }
 
-float* vec4_swizzle(float * restrict dst_xyzw, float const * restrict src_xyzw, size_t x, size_t y, size_t z, size_t w)
+float* vec4_swizzle(float * __restrict dst_xyzw, float const * __restrict src_xyzw, size_t x, size_t y, size_t z, size_t w)
 {
     float a     = src_xyzw[x];
     float b     = src_xyzw[y];
@@ -1025,14 +1025,14 @@ float* vec4_swizzle(float * restrict dst_xyzw, float const * restrict src_xyzw, 
     return dst_xyzw;
 }
 
-float* vec2_linear(float * restrict dst_xy, float const * restrict a_xy, float const * restrict b_xy, float t)
+float* vec2_linear(float * __restrict dst_xy, float const * __restrict a_xy, float const * __restrict b_xy, float t)
 {
     dst_xy[0] = linear(a_xy[0], b_xy[0], t);
     dst_xy[1] = linear(a_xy[1], b_xy[1], t);
     return dst_xy;
 }
 
-float* vec3_linear(float * restrict dst_xyz, float const * restrict a_xyz, float const * restrict b_xyz, float t)
+float* vec3_linear(float * __restrict dst_xyz, float const * __restrict a_xyz, float const * __restrict b_xyz, float t)
 {
     dst_xyz[0] = linear(a_xyz[0], b_xyz[0], t);
     dst_xyz[1] = linear(a_xyz[1], b_xyz[1], t);
@@ -1040,7 +1040,7 @@ float* vec3_linear(float * restrict dst_xyz, float const * restrict a_xyz, float
     return dst_xyz;
 }
 
-float* vec4_linear(float * restrict dst_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw, float t)
+float* vec4_linear(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw, float t)
 {
     dst_xyzw[0] = linear(a_xyzw[0], b_xyzw[0], t);
     dst_xyzw[1] = linear(a_xyzw[1], b_xyzw[1], t);
@@ -1049,7 +1049,7 @@ float* vec4_linear(float * restrict dst_xyzw, float const * restrict a_xyzw, flo
     return dst_xyzw;
 }
 
-float* vec4_linear3(float * restrict dst_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw, float t)
+float* vec4_linear3(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw, float t)
 {
     dst_xyzw[0] = linear(a_xyzw[0], b_xyzw[0], t);
     dst_xyzw[1] = linear(a_xyzw[1], b_xyzw[1], t);
@@ -1059,11 +1059,11 @@ float* vec4_linear3(float * restrict dst_xyzw, float const * restrict a_xyzw, fl
 }
 
 float* vec2_bezier(
-    float       * restrict dst_xy,
-    float const * restrict a_xy,
-    float const * restrict b_xy,
-    float const * restrict itan_xy,
-    float const * restrict otan_xy,
+    float       * __restrict dst_xy,
+    float const * __restrict a_xy,
+    float const * __restrict b_xy,
+    float const * __restrict itan_xy,
+    float const * __restrict otan_xy,
     float                  t)
 {
     dst_xy[0] = bezier(a_xy[0], b_xy[0], itan_xy[0], otan_xy[0], t);
@@ -1072,11 +1072,11 @@ float* vec2_bezier(
 }
 
 float* vec3_bezier(
-    float       * restrict dst_xyz,
-    float const * restrict a_xyz,
-    float const * restrict b_xyz,
-    float const * restrict itan_xyz,
-    float const * restrict otan_xyz,
+    float       * __restrict dst_xyz,
+    float const * __restrict a_xyz,
+    float const * __restrict b_xyz,
+    float const * __restrict itan_xyz,
+    float const * __restrict otan_xyz,
     float                  t)
 {
     dst_xyz[0] = bezier(a_xyz[0], b_xyz[0], itan_xyz[0], otan_xyz[0], t);
@@ -1086,11 +1086,11 @@ float* vec3_bezier(
 }
 
 float* vec4_bezier(
-    float       * restrict dst_xyzw,
-    float const * restrict a_xyzw,
-    float const * restrict b_xyzw,
-    float const * restrict itan_xyzw,
-    float const * restrict otan_xyzw,
+    float       * __restrict dst_xyzw,
+    float const * __restrict a_xyzw,
+    float const * __restrict b_xyzw,
+    float const * __restrict itan_xyzw,
+    float const * __restrict otan_xyzw,
     float                  t)
 {
     dst_xyzw[0] = bezier(a_xyzw[0], b_xyzw[0], itan_xyzw[0], otan_xyzw[0], t);
@@ -1101,11 +1101,11 @@ float* vec4_bezier(
 }
 
 float* vec4_bezier3(
-    float       * restrict dst_xyzw,
-    float const * restrict a_xyzw,
-    float const * restrict b_xyzw,
-    float const * restrict itan_xyz,
-    float const * restrict otan_xyz,
+    float       * __restrict dst_xyzw,
+    float const * __restrict a_xyzw,
+    float const * __restrict b_xyzw,
+    float const * __restrict itan_xyz,
+    float const * __restrict otan_xyz,
     float                  t)
 {
     dst_xyzw[0] = bezier(a_xyzw[0], b_xyzw[0], itan_xyz[0], otan_xyz[0], t);
@@ -1116,11 +1116,11 @@ float* vec4_bezier3(
 }
 
 float* vec2_hermite(
-    float       * restrict dst_xy,
-    float const * restrict a_xy,
-    float const * restrict b_xy,
-    float const * restrict itan_xy,
-    float const * restrict otan_xy,
+    float       * __restrict dst_xy,
+    float const * __restrict a_xy,
+    float const * __restrict b_xy,
+    float const * __restrict itan_xy,
+    float const * __restrict otan_xy,
     float                  t)
 {
     dst_xy[0] = hermite(a_xy[0], b_xy[0], itan_xy[0], otan_xy[0], t);
@@ -1129,11 +1129,11 @@ float* vec2_hermite(
 }
 
 float* vec3_hermite(
-    float       * restrict dst_xyz,
-    float const * restrict a_xyz,
-    float const * restrict b_xyz,
-    float const * restrict itan_xyz,
-    float const * restrict otan_xyz,
+    float       * __restrict dst_xyz,
+    float const * __restrict a_xyz,
+    float const * __restrict b_xyz,
+    float const * __restrict itan_xyz,
+    float const * __restrict otan_xyz,
     float                  t)
 {
     dst_xyz[0] = hermite(a_xyz[0], b_xyz[0], itan_xyz[0], otan_xyz[0], t);
@@ -1143,11 +1143,11 @@ float* vec3_hermite(
 }
 
 float* vec4_hermite(
-    float       * restrict dst_xyzw,
-    float const * restrict a_xyzw,
-    float const * restrict b_xyzw,
-    float const * restrict itan_xyzw,
-    float const * restrict otan_xyzw,
+    float       * __restrict dst_xyzw,
+    float const * __restrict a_xyzw,
+    float const * __restrict b_xyzw,
+    float const * __restrict itan_xyzw,
+    float const * __restrict otan_xyzw,
     float                  t)
 {
     dst_xyzw[0] = hermite(a_xyzw[0], b_xyzw[0], itan_xyzw[0], otan_xyzw[0], t);
@@ -1158,11 +1158,11 @@ float* vec4_hermite(
 }
 
 float* vec4_hermite3(
-    float       * restrict dst_xyzw,
-    float const * restrict a_xyzw,
-    float const * restrict b_xyzw,
-    float const * restrict itan_xyz,
-    float const * restrict otan_xyz,
+    float       * __restrict dst_xyzw,
+    float const * __restrict a_xyzw,
+    float const * __restrict b_xyzw,
+    float const * __restrict itan_xyz,
+    float const * __restrict otan_xyz,
     float                  t)
 {
     dst_xyzw[0] = hermite(a_xyzw[0], b_xyzw[0], itan_xyz[0], otan_xyz[0], t);
@@ -1181,7 +1181,7 @@ float* quat_set(float *dst_xyzw, float x, float y, float z, float w)
     return dst_xyzw;
 }
 
-float* quat_set_quat(float * restrict dst_xyzw, float const * restrict src_xyzw)
+float* quat_set_quat(float * __restrict dst_xyzw, float const * __restrict src_xyzw)
 {
     dst_xyzw[0] = src_xyzw[0];
     dst_xyzw[1] = src_xyzw[1];
@@ -1247,7 +1247,7 @@ float* quat_set_ident(float *dst_xyzw)
     return dst_xyzw;
 }
 
-bool quat_eq(float const * restrict a_xyzw, float const * restrict b_xyzw)
+bool quat_eq(float const * __restrict a_xyzw, float const * __restrict b_xyzw)
 {
     if (!eq(a_xyzw[0], b_xyzw[0]))
         return 0;
@@ -1260,7 +1260,7 @@ bool quat_eq(float const * restrict a_xyzw, float const * restrict b_xyzw)
     return 1;
 }
 
-float* quat_add(float * restrict dst_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw)
+float* quat_add(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw)
 {
     dst_xyzw[0] = a_xyzw[0] + b_xyzw[0];
     dst_xyzw[1] = a_xyzw[1] + b_xyzw[1];
@@ -1269,7 +1269,7 @@ float* quat_add(float * restrict dst_xyzw, float const * restrict a_xyzw, float 
     return dst_xyzw;
 }
 
-float* quat_sub(float * restrict dst_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw)
+float* quat_sub(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw)
 {
     dst_xyzw[0] = a_xyzw[0] - b_xyzw[0];
     dst_xyzw[1] = a_xyzw[1] - b_xyzw[1];
@@ -1278,7 +1278,7 @@ float* quat_sub(float * restrict dst_xyzw, float const * restrict a_xyzw, float 
     return dst_xyzw;
 }
 
-float* quat_mul(float * restrict dst_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw)
+float* quat_mul(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw)
 {
     float ax = a_xyzw[0], ay = a_xyzw[1], az = a_xyzw[2], aw = a_xyzw[3];
     float bx = b_xyzw[0], by = b_xyzw[1], bz = b_xyzw[2], bw = b_xyzw[3];
@@ -1289,7 +1289,7 @@ float* quat_mul(float * restrict dst_xyzw, float const * restrict a_xyzw, float 
     return dst_xyzw;
 }
 
-float* quat_scl(float * restrict dst_xyzw, float const * restrict a_xyzw, float b)
+float* quat_scl(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float b)
 {
     dst_xyzw[0] = a_xyzw[0] * b;
     dst_xyzw[1] = a_xyzw[1] * b;
@@ -1298,7 +1298,7 @@ float* quat_scl(float * restrict dst_xyzw, float const * restrict a_xyzw, float 
     return dst_xyzw;
 }
 
-float* quat_scl3(float * restrict dst_xyzw, float const * restrict a_xyzw, float b)
+float* quat_scl3(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float b)
 {
     dst_xyzw[0] = a_xyzw[0] * b;
     dst_xyzw[1] = a_xyzw[1] * b;
@@ -1307,7 +1307,7 @@ float* quat_scl3(float * restrict dst_xyzw, float const * restrict a_xyzw, float
     return dst_xyzw;
 }
 
-float* quat_neg(float * restrict dst_xyzw, float const * restrict src_xyzw)
+float* quat_neg(float * __restrict dst_xyzw, float const * __restrict src_xyzw)
 {
     dst_xyzw[0] = -src_xyzw[0];
     dst_xyzw[1] = -src_xyzw[1];
@@ -1316,7 +1316,7 @@ float* quat_neg(float * restrict dst_xyzw, float const * restrict src_xyzw)
     return dst_xyzw;
 }
 
-float* quat_neg3(float * restrict dst_xyzw, float const * restrict src_xyzw)
+float* quat_neg3(float * __restrict dst_xyzw, float const * __restrict src_xyzw)
 {
     dst_xyzw[0] = -src_xyzw[0];
     dst_xyzw[1] = -src_xyzw[1];
@@ -1325,7 +1325,7 @@ float* quat_neg3(float * restrict dst_xyzw, float const * restrict src_xyzw)
     return dst_xyzw;
 }
 
-float* quat_conj(float * restrict dst_xyzw, float const * restrict src_xyzw)
+float* quat_conj(float * __restrict dst_xyzw, float const * __restrict src_xyzw)
 {
     dst_xyzw[0] = -src_xyzw[0];
     dst_xyzw[1] = -src_xyzw[1];
@@ -1334,7 +1334,7 @@ float* quat_conj(float * restrict dst_xyzw, float const * restrict src_xyzw)
     return dst_xyzw;
 }
 
-float quat_dot(float const * restrict a_xyzw, float const * restrict b_xyzw)
+float quat_dot(float const * __restrict a_xyzw, float const * __restrict b_xyzw)
 {
     // equivalent to selection(a * conjugate(b))
     return (a_xyzw[0] * b_xyzw[0] + a_xyzw[1] * b_xyzw[1] + a_xyzw[2] * b_xyzw[2] + a_xyzw[3] * b_xyzw[3]);
@@ -1360,7 +1360,7 @@ float quat_sel(float const *src_xyzw)
     return src_xyzw[3];
 }
 
-float* quat_inv(float * restrict dst_xyzw, float const * restrict src_xyzw)
+float* quat_inv(float * __restrict dst_xyzw, float const * __restrict src_xyzw)
 {
     float norm = quat_norm(src_xyzw);
     if (!eq(norm, 0))
@@ -1379,7 +1379,7 @@ float* quat_inv(float * restrict dst_xyzw, float const * restrict src_xyzw)
     }
 }
 
-float* quat_nrm(float * restrict dst_xyzw, float const * restrict src_xyzw)
+float* quat_nrm(float * __restrict dst_xyzw, float const * __restrict src_xyzw)
 {
     float length = quat_len(src_xyzw);
     if (!eq(length, 0))
@@ -1398,7 +1398,7 @@ float* quat_nrm(float * restrict dst_xyzw, float const * restrict src_xyzw)
     }
 }
 
-float* quat_exp(float * restrict dst_xyzw, float const * restrict src_xyzw)
+float* quat_exp(float * __restrict dst_xyzw, float const * __restrict src_xyzw)
 {
     float ax = src_xyzw[0], ay = src_xyzw[1], az = src_xyzw[2];
     float t  = sqrtf(ax * ax + ay * ay + az * az);
@@ -1424,7 +1424,7 @@ float* quat_exp(float * restrict dst_xyzw, float const * restrict src_xyzw)
     }
 }
 
-float* quat_log(float * restrict dst_xyzw, float const * restrict src_xyzw)
+float* quat_log(float * __restrict dst_xyzw, float const * __restrict src_xyzw)
 {
     float ax = src_xyzw[0], ay = src_xyzw[1], az = src_xyzw[2], aw = src_xyzw[3];
 
@@ -1448,7 +1448,7 @@ float* quat_log(float * restrict dst_xyzw, float const * restrict src_xyzw)
     return dst_xyzw;
 }
 
-float* quat_closest(float * restrict dst_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw)
+float* quat_closest(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw)
 {
     if (quat_dot(a_xyzw, b_xyzw) < 0.0f)
     {
@@ -1464,7 +1464,7 @@ float* quat_closest(float * restrict dst_xyzw, float const * restrict a_xyzw, fl
     }
 }
 
-float* quat_orient_vec3(float * restrict dst_xyzw, float const * restrict from_xyz, float const * restrict to_xyz)
+float* quat_orient_vec3(float * __restrict dst_xyzw, float const * __restrict from_xyz, float const * __restrict to_xyz)
 {
     float unit_from[3];
     float unit_to[3];
@@ -1484,7 +1484,7 @@ float* quat_orient_vec3(float * restrict dst_xyzw, float const * restrict from_x
     return dst_xyzw;
 }
 
-float* quat_orient_vec4(float * restrict dst_xyzw, float const * restrict from_xyzw, float const * restrict to_xyzw)
+float* quat_orient_vec4(float * __restrict dst_xyzw, float const * __restrict from_xyzw, float const * __restrict to_xyzw)
 {
     float unit_from[3];
     float unit_to[3];
@@ -1504,7 +1504,7 @@ float* quat_orient_vec4(float * restrict dst_xyzw, float const * restrict from_x
     return dst_xyzw;
 }
 
-float* quat_set_mat4(float * restrict dst_xyzw, float const * restrict m16)
+float* quat_set_mat4(float * __restrict dst_xyzw, float const * __restrict m16)
 {
     float trace_plus_one = 1.0f + m16[0] + m16[5] + m16[10];
     if   (trace_plus_one > 0.0f)
@@ -1592,12 +1592,12 @@ float* quat_set_euler_radian(float *dst_xyzw, float rad_x, float rad_y, float ra
     return quat_mul(dst_xyzw, qxy, qz);
 }
 
-float* quat_set_angle_axis_degree_n(float * restrict dst_xyzw, float angle_deg, float const *axis_xyz)
+float* quat_set_angle_axis_degree_n(float * __restrict dst_xyzw, float angle_deg, float const *axis_xyz)
 {
     return quat_set_angle_axis_radian_n(dst_xyzw, rad(angle_deg), axis_xyz);
 }
 
-float* quat_set_angle_axis_radian_n(float * restrict dst_xyzw, float angle_rad, float const * restrict axis_xyz)
+float* quat_set_angle_axis_radian_n(float * __restrict dst_xyzw, float angle_rad, float const * __restrict axis_xyz)
 {
     float half_angle = 0.5f * angle_rad;
     float sin_angle  = sinf(half_angle);
@@ -1609,12 +1609,12 @@ float* quat_set_angle_axis_radian_n(float * restrict dst_xyzw, float angle_rad, 
     return dst_xyzw;
 }
 
-float* quat_set_angle_axis_degree_u(float * restrict dst_xyzw, float angle_deg, float const * restrict axis_xyz)
+float* quat_set_angle_axis_degree_u(float * __restrict dst_xyzw, float angle_deg, float const * __restrict axis_xyz)
 {
     return quat_set_angle_axis_radian_u(dst_xyzw, rad(angle_deg), axis_xyz);
 }
 
-float* quat_set_angle_axis_radian_u(float * restrict dst_xyzw, float angle_rad, float const * restrict axis_xyz)
+float* quat_set_angle_axis_radian_u(float * __restrict dst_xyzw, float angle_rad, float const * __restrict axis_xyz)
 {
     float half_angle  = 0.5f * angle_rad;
     float sin_angle   = sinf(half_angle);
@@ -1628,7 +1628,7 @@ float* quat_set_angle_axis_radian_u(float * restrict dst_xyzw, float angle_rad, 
     return dst_xyzw;
 }
 
-float* quat_linear(float * restrict dst_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw, float t)
+float* quat_linear(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw, float t)
 {
     dst_xyzw[0] = linear(a_xyzw[0], b_xyzw[0], t);
     dst_xyzw[1] = linear(a_xyzw[1], b_xyzw[1], t);
@@ -1637,7 +1637,7 @@ float* quat_linear(float * restrict dst_xyzw, float const * restrict a_xyzw, flo
     return dst_xyzw;
 }
 
-float* quat_slerp(float * restrict dst_xyzw, float const * restrict a_xyzw, float const * restrict b_xyzw, float t)
+float* quat_slerp(float * __restrict dst_xyzw, float const * __restrict a_xyzw, float const * __restrict b_xyzw, float t)
 {
     float ax  = a_xyzw[0], ay = a_xyzw[1], az = a_xyzw[2], aw = a_xyzw[3];
     float bx  = b_xyzw[0], by = b_xyzw[1], bz = b_xyzw[2], bw = b_xyzw[3];
@@ -1680,11 +1680,11 @@ float* quat_slerp(float * restrict dst_xyzw, float const * restrict a_xyzw, floa
 }
 
 float* quat_squad(
-    float       * restrict dst_xyzw,
-    float const * restrict p_xyzw,
-    float const * restrict a_xyzw,
-    float const * restrict b_xyzw,
-    float const * restrict q_xyzw,
+    float       * __restrict dst_xyzw,
+    float const * __restrict p_xyzw,
+    float const * __restrict a_xyzw,
+    float const * __restrict b_xyzw,
+    float const * __restrict q_xyzw,
     float                  t)
 {
     float at[4];
@@ -1696,10 +1696,10 @@ float* quat_squad(
 }
 
 float* quat_spline(
-    float       * restrict dst_xyzw,
-    float const * restrict a_xyzw,
-    float const * restrict b_xyzw,
-    float const * restrict c_xyzw)
+    float       * __restrict dst_xyzw,
+    float const * __restrict a_xyzw,
+    float const * __restrict b_xyzw,
+    float const * __restrict c_xyzw)
 {
     float ab[4];
     float ac[4];
@@ -1739,7 +1739,7 @@ float* mat4_set(
     return dst16;
 }
 
-float* mat4_set_mat4(float * restrict dst16, float const * restrict src16)
+float* mat4_set_mat4(float * __restrict dst16, float const * __restrict src16)
 {
     for (size_t i = 0; i < 16; ++i)
     {
@@ -1805,7 +1805,7 @@ float* mat4_set_ident(float *dst16)
     return dst16;
 }
 
-bool mat4_eq(float const * restrict a16, float const * restrict b16)
+bool mat4_eq(float const * __restrict a16, float const * __restrict b16)
 {
     for (size_t i = 0; i < 16; ++i)
     {
@@ -1854,11 +1854,11 @@ bool mat4_is_identity(float const *src16)
 }
 
 float* mat4_set_rows(
-    float       * restrict dst16,
-    float const * restrict r0_xyzw,
-    float const * restrict r1_xyzw,
-    float const * restrict r2_xyzw,
-    float const * restrict r3_xyzw)
+    float       * __restrict dst16,
+    float const * __restrict r0_xyzw,
+    float const * __restrict r1_xyzw,
+    float const * __restrict r2_xyzw,
+    float const * __restrict r3_xyzw)
 {
     dst16[0]  = r0_xyzw[0]; dst16[1] = r1_xyzw[0]; dst16[2] = r2_xyzw[0]; dst16[3] = r3_xyzw[0];
     dst16[4]  = r0_xyzw[1]; dst16[5] = r1_xyzw[1]; dst16[6] = r2_xyzw[1]; dst16[7] = r3_xyzw[1];
@@ -1868,11 +1868,11 @@ float* mat4_set_rows(
 }
 
 float* mat4_set_cols(
-    float       * restrict dst16,
-    float const * restrict c0_xyzw,
-    float const * restrict c1_xyzw,
-    float const * restrict c2_xyzw,
-    float const * restrict c3_xyzw)
+    float       * __restrict dst16,
+    float const * __restrict c0_xyzw,
+    float const * __restrict c1_xyzw,
+    float const * __restrict c2_xyzw,
+    float const * __restrict c3_xyzw)
 {
     dst16[0]  = c0_xyzw[0]; dst16[1] = c0_xyzw[1]; dst16[2] = c0_xyzw[2]; dst16[3] = c0_xyzw[3];
     dst16[4]  = c1_xyzw[0]; dst16[5] = c1_xyzw[1]; dst16[6] = c1_xyzw[2]; dst16[7] = c1_xyzw[3];
@@ -1881,7 +1881,7 @@ float* mat4_set_cols(
     return dst16;
 }
 
-float* mat4_get_row(float * restrict dst_xyzw, size_t row, float const * restrict src16)
+float* mat4_get_row(float * __restrict dst_xyzw, size_t row, float const * __restrict src16)
 {
     dst_xyzw[0] = src16[row +  0];
     dst_xyzw[1] = src16[row +  4];
@@ -1890,7 +1890,7 @@ float* mat4_get_row(float * restrict dst_xyzw, size_t row, float const * restric
     return dst_xyzw;
 }
 
-float* mat4_set_row(float * restrict dst16, size_t row, float const * restrict src_xyzw)
+float* mat4_set_row(float * __restrict dst16, size_t row, float const * __restrict src_xyzw)
 {
     dst16[row +  0] = src_xyzw[0];
     dst16[row +  4] = src_xyzw[1];
@@ -1899,7 +1899,7 @@ float* mat4_set_row(float * restrict dst16, size_t row, float const * restrict s
     return dst16;
 }
 
-float* mat4_get_col(float * restrict dst_xyzw, size_t col, float const * restrict src16)
+float* mat4_get_col(float * __restrict dst_xyzw, size_t col, float const * __restrict src16)
 {
     dst_xyzw[0] = src16[col * 4 + 0];
     dst_xyzw[1] = src16[col * 4 + 1];
@@ -1908,7 +1908,7 @@ float* mat4_get_col(float * restrict dst_xyzw, size_t col, float const * restric
     return dst_xyzw;
 }
 
-float* mat4_set_col(float * restrict dst16, size_t col, float const * restrict src_xyzw)
+float* mat4_set_col(float * __restrict dst16, size_t col, float const * __restrict src_xyzw)
 {
     dst16[col * 4 + 0] = src_xyzw[0];
     dst16[col * 4 + 1] = src_xyzw[1];
@@ -1930,7 +1930,7 @@ float mat4_det(float const *src16)
     return src16[0] * c0 + src16[4]  * c4 + src16[8] * c8;
 }
 
-float* mat4x4_transpose(float * restrict dst16, float const * restrict src16)
+float* mat4x4_transpose(float * __restrict dst16, float const * __restrict src16)
 {
     float src0   = src16[0];
     float src1   = src16[1];
@@ -1972,7 +1972,7 @@ float* mat4x4_transpose(float * restrict dst16, float const * restrict src16)
     return dst16;
 }
 
-float* mat4_concat(float * restrict dst16, float const * restrict a16, float const * restrict b16)
+float* mat4_concat(float * __restrict dst16, float const * __restrict a16, float const * __restrict b16)
 {
     // transformation 'a' is applied first, followed by transformation 'b'.
     // result is the dot product of the columns of 'a' and the rows of 'b'.
@@ -2032,7 +2032,7 @@ float* mat4_concat(float * restrict dst16, float const * restrict a16, float con
     return dst16;
 }
 
-float* mat4_inv_affine(float * restrict dst16, float const * restrict src16)
+float* mat4_inv_affine(float * __restrict dst16, float const * __restrict src16)
 {
     float c0  = src16[5] * src16[10] - src16[6] * src16[9];
     float c4  = src16[2] * src16[9]  - src16[1] * src16[10];
@@ -2068,7 +2068,7 @@ float* mat4_inv_affine(float * restrict dst16, float const * restrict src16)
     }
 }
 
-float* mat4_set_quat(float * restrict dst16, float const * restrict src_xyzw)
+float* mat4_set_quat(float * __restrict dst16, float const * __restrict src_xyzw)
 {
     float xx  = src_xyzw[0] * src_xyzw[0];
     float xy  = src_xyzw[0] * src_xyzw[1];
@@ -2166,12 +2166,12 @@ float* mat4_set_euler_radian(float *dst16, float rad_x, float rad_y, float rad_z
     return dst16;
 }
 
-float* mat4_set_angle_axis_degree_n(float * restrict dst16, float angle_deg, float const * restrict axis_xyz)
+float* mat4_set_angle_axis_degree_n(float * __restrict dst16, float angle_deg, float const * __restrict axis_xyz)
 {
     return mat4_set_angle_axis_radian_n(dst16, rad(angle_deg), axis_xyz);
 }
 
-float* mat4_set_angle_axis_radian_n(float * restrict dst16, float angle_rad, float const * restrict axis_xyz)
+float* mat4_set_angle_axis_radian_n(float * __restrict dst16, float angle_rad, float const * __restrict axis_xyz)
 {
     float sa  = sinf(angle_rad);
     float ca  = cosf(angle_rad);
@@ -2204,21 +2204,21 @@ float* mat4_set_angle_axis_radian_n(float * restrict dst16, float angle_rad, flo
     return dst16;
 }
 
-float* mat4_set_angle_axis_degree_u(float * restrict dst16, float angle_deg, float const * restrict axis_xyz)
+float* mat4_set_angle_axis_degree_u(float * __restrict dst16, float angle_deg, float const * __restrict axis_xyz)
 {
     float n[3];
     vec3_nrm(n, axis_xyz);
     return mat4_set_angle_axis_radian_n(dst16, rad(angle_deg), n);
 }
 
-float* mat4_set_angle_axis_radian_u(float * restrict dst16, float angle_rad, float const * restrict axis_xyz)
+float* mat4_set_angle_axis_radian_u(float * __restrict dst16, float angle_rad, float const * __restrict axis_xyz)
 {
     float n[3];
     vec3_nrm(n, axis_xyz);
     return mat4_set_angle_axis_radian_n(dst16, angle_rad, n);
 }
 
-float* mat4_look_at(float * restrict dst16, float const * restrict pos_xyz, float const * restrict target_xyz, float const * restrict up_xyz)
+float* mat4_look_at(float * __restrict dst16, float const * __restrict pos_xyz, float const * __restrict target_xyz, float const * __restrict up_xyz)
 {
     float d1, d2, d3;
     float tx, ty, tz;
@@ -2301,13 +2301,13 @@ float* mat4_2d(float *dst16, float width, float height)
 }
 
 void mat4_extract_frustum_n(
-    float       * restrict left_xyzD,
-    float       * restrict right_xyzD,
-    float       * restrict top_xyzD,
-    float       * restrict bottom_xyzD,
-    float       * restrict near_xyzD,
-    float       * restrict far_xyzD,
-    float const * restrict src16)
+    float       * __restrict left_xyzD,
+    float       * __restrict right_xyzD,
+    float       * __restrict top_xyzD,
+    float       * __restrict bottom_xyzD,
+    float       * __restrict near_xyzD,
+    float       * __restrict far_xyzD,
+    float const * __restrict src16)
 {
     float l[4], r[4], t[4], b[4], n[4], f[4];
     mat4_extract_frustum_u(l, r, t, b, n, f, src16);
@@ -2320,13 +2320,13 @@ void mat4_extract_frustum_n(
 }
 
 void mat4_extract_frustum_u(
-    float       * restrict left_xyzD,
-    float       * restrict right_xyzD,
-    float       * restrict top_xyzD,
-    float       * restrict bottom_xyzD,
-    float       * restrict near_xyzD,
-    float       * restrict far_xyzD,
-    float const * restrict src16)
+    float       * __restrict left_xyzD,
+    float       * __restrict right_xyzD,
+    float       * __restrict top_xyzD,
+    float       * __restrict bottom_xyzD,
+    float       * __restrict near_xyzD,
+    float       * __restrict far_xyzD,
+    float const * __restrict src16)
 {
     left_xyzD[0]   = src16[3]  + src16[0];
     left_xyzD[1]   = src16[7]  + src16[4];
@@ -2360,9 +2360,9 @@ void mat4_extract_frustum_u(
 }
 
 float* mat4_transform_vec3(
-    float       * restrict dst_xyz,
-    float const * restrict src_xyz,
-    float const * restrict t16)
+    float       * __restrict dst_xyz,
+    float const * __restrict src_xyz,
+    float const * __restrict t16)
 {
     float vx = src_xyz[0];
     float vy = src_xyz[1];
@@ -2376,9 +2376,9 @@ float* mat4_transform_vec3(
 }
 
 float* mat4_transform_vec4(
-    float       * restrict dst_xyzw,
-    float const * restrict src_xyzw,
-    float const * restrict t16)
+    float       * __restrict dst_xyzw,
+    float const * __restrict src_xyzw,
+    float const * __restrict t16)
 {
     float vx = src_xyzw[0];
     float vy = src_xyzw[1];
@@ -2394,9 +2394,9 @@ float* mat4_transform_vec4(
 }
 
 float* mat4_transform_point(
-    float       * restrict dst_xyz,
-    float const * restrict src_xyz,
-    float const * restrict t16)
+    float       * __restrict dst_xyz,
+    float const * __restrict src_xyz,
+    float const * __restrict t16)
 {
     float vx = src_xyz[0];
     float vy = src_xyz[1];
@@ -2411,9 +2411,9 @@ float* mat4_transform_point(
 }
 
 float* mat4_transform_vector(
-    float       * restrict dst_xyz,
-    float const * restrict src_xyz,
-    float const * restrict t16)
+    float       * __restrict dst_xyz,
+    float const * __restrict src_xyz,
+    float const * __restrict t16)
 {
     float vx = src_xyz[0];
     float vy = src_xyz[1];
@@ -2428,9 +2428,9 @@ float* mat4_transform_vector(
 }
 
 float* mat4_transform_array_vec4(
-    float       * restrict dst_xyzw,
-    float const * restrict src_xyzw,
-    float const * restrict t16,
+    float       * __restrict dst_xyzw,
+    float const * __restrict src_xyzw,
+    float const * __restrict t16,
     size_t                 count)
 {
     float  *dst = dst_xyzw;
@@ -2453,9 +2453,9 @@ float* mat4_transform_array_vec4(
 }
 
 float* mat4_transform_array_point(
-    float       * restrict dst_xyz,
-    float const * restrict src_xyz,
-    float const * restrict t16,
+    float       * __restrict dst_xyz,
+    float const * __restrict src_xyz,
+    float const * __restrict t16,
     size_t                 count)
 {
     float  *dst = dst_xyz;
@@ -2476,9 +2476,9 @@ float* mat4_transform_array_point(
 }
 
 float* mat4_transform_array_vector(
-    float       * restrict dst_xyz,
-    float const * restrict src_xyz,
-    float const * restrict t16,
+    float       * __restrict dst_xyz,
+    float const * __restrict src_xyz,
+    float const * __restrict t16,
     size_t                 count)
 {
     float  *dst = dst_xyz;
