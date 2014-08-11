@@ -13,6 +13,7 @@
 
 #include "common.hpp"
 #include "platform.hpp"
+#include "display.hpp"
 
 /*/////////////////
 //   Constants   //
@@ -86,6 +87,9 @@ static void simulate(double currentTime, double elapsedTime)
     UNUSED_ARG(elapsedTime);
 }
 
+static Texture *gTEX;
+static SpriteBatch *gBATCH;
+
 /// @summary Submits a single frame to the GPU for rendering. Runs once per
 /// application tick at a variable timestep.
 /// @param currentTime The current absolute time, in seconds. This represents
@@ -98,6 +102,8 @@ static void render(double currentTime, double elapsedTime, double t)
     UNUSED_ARG(currentTime);
     UNUSED_ARG(elapsedTime);
     UNUSED_ARG(t);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
 /*///////////////////////
@@ -160,6 +166,17 @@ int main(int argc, char **argv)
     }
 #endif
 
+
+    // monkey stuff
+    gTEX = new Texture();
+    if (gTEX->LoadFromFile("test_bg.tga"))
+    {
+        printf("Loaded texture ok!\n");
+    }
+
+    gBATCH = new SpriteBatch();
+    gBATCH->CreateGPUResources();
+
     const double   Step = GW_SIM_TIMESTEP;
     double previousTime = glfwGetTime();
     double currentTime  = previousTime;
@@ -207,6 +224,12 @@ int main(int argc, char **argv)
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+    gTEX->Dispose();
+    delete gTEX;
+
+    gBATCH->DeleteGPUResources();
+    delete gBATCH;
 
     // perform any top-level cleanup.
     glfwTerminate();

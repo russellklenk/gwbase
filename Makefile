@@ -4,7 +4,6 @@ EXE_SRCS    := \
 	src/math.cpp \
 	src/glimage.cpp \
 	src/glshader.cpp \
-	src/texture.cpp \
 	src/display.cpp \
 	src/input.cpp \
 	src/entity.cpp \
