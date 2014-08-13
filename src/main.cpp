@@ -111,7 +111,7 @@ static char const *gVSS =
     "void main() {\n"
     "    vCLR = aCLR;\n"
     "    vTEX = vec2(aPTX.z, aPTX.w);\n"
-    "    gl_Position = uMSS * vec4(aPTX.x, aPTX.y, 0, 1);\n"
+    "    gl_Position = uMSS * vec4(aPTX.x, aPTX.y, 1, 1);\n"
     "}\n";
 
 static char const *gFSS =
@@ -129,8 +129,10 @@ static void effect_setup(sprite_effect_t *effect, void *context)
     UNUSED_ARG(context);
     glUseProgram(gPROGRAM);
     glDisable(GL_DEPTH_TEST);
+    glDisable(GL_CULL_FACE);
     sprite_effect_bind_buffers(effect);
     sprite_effect_apply_blendstate(effect);
+    set_uniform(uMSS, effect->Projection, false);
 }
 
 static void effect_apply_state(sprite_effect_t *effect, uint32_t state, void *context)
@@ -149,12 +151,18 @@ static void effect_apply_state(sprite_effect_t *effect, uint32_t state, void *co
 /// @param elapsedTime The time elapsed since the previous tick, in seconds.
 /// @param t A value in [0, 1] indicating how far into the current simulation
 /// step we are at the time the frame is generated.
-static void render(double currentTime, double elapsedTime, double t)
+/// @param width The width of the default framebuffer, in pixels.
+/// @param height The height of the default framebuffer, in pixels.
+static void render(double currentTime, double elapsedTime, double t, int width, int height)
 {
     UNUSED_ARG(currentTime);
     UNUSED_ARG(elapsedTime);
     UNUSED_ARG(t);
 
+    //// TEST CODE
+
+    glViewport(0, 0, width, height);
+    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     flush_sprite_batch(&gBATCH);
@@ -174,18 +182,21 @@ static void render(double currentTime, double elapsedTime, double t)
     sprite.ImageHeight   = gTEX->GetHeight();
     sprite.TextureWidth  = gTEX->GetWidth();
     sprite.TextureHeight = gTEX->GetHeight();
-    sprite.LayerDepth    = 0;
+    sprite.LayerDepth    = 1;
     sprite.RenderState   = uint32_t(gTEX->GetId());
 
     ensure_sprite_batch(&gBATCH, 1);
     generate_quads(gBATCH.Quads, gBATCH.State, 0, &sprite, 0, 1);
+    gBATCH.Count = 1;
 
-    sprite_effect_set_viewport(&gEFFECT, GW_WINDOW_WIDTH, GW_WINDOW_HEIGHT);
+    sprite_effect_set_viewport(&gEFFECT, 640, 480);
     sprite_effect_apply_t fxfuncs = {
         effect_setup,
         effect_apply_state
     };
     sprite_effect_draw_batch_ptc(&gEFFECT, &gBATCH, &fxfuncs, NULL);
+
+    //// TEST CODE
 }
 
 /*///////////////////////
@@ -297,9 +308,15 @@ int main(int argc, char **argv)
     double accumulator  = 0.0;
     double simTime      = 0.0;
     double t            = 0.0;
+    int    width        = 0;
+    int    height       = 0;
 
     while (!glfwWindowShouldClose(window))
     {
+        // retrieve the current framebuffer size, which
+        // may be different from the current window size.
+        glfwGetFramebufferSize(window, &width, &height);
+
         // update the main game clock.
         previousTime = currentTime;
         currentTime  = glfwGetTime();
@@ -331,7 +348,7 @@ int main(int argc, char **argv)
         // interpolate display state.
         t = accumulator / Step;
         // state = currentState * t + previousState * (1.0 - t);
-        render(currentTime, elapsedTime, t);
+        render(currentTime, elapsedTime, t, width, height);
 
         // now present the current frame and process OS events.
         glfwSwapBuffers(window);
