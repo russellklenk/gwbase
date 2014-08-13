@@ -12,6 +12,8 @@
 #include <stdlib.h>
 
 #include "display.hpp"
+#include "glsprite.hpp"
+#include "glshader.hpp"
 
 /*/////////////////
 //   Constants   //
@@ -85,8 +87,60 @@ static void simulate(double currentTime, double elapsedTime)
     UNUSED_ARG(elapsedTime);
 }
 
-static Texture *gTEX;
-static SpriteBatch *gBATCH;
+//// TEST CODE
+
+static Texture *gTEX = NULL;
+
+static GLuint            gPROGRAM;
+static shader_desc_t     gSHADER;
+static attribute_desc_t *aPTX = NULL;
+static attribute_desc_t *aCLR = NULL;
+static sampler_desc_t   *sTEX = NULL;
+static uniform_desc_t   *uMSS = NULL;
+
+static sprite_effect_t gEFFECT;
+static sprite_batch_t  gBATCH;
+
+static char const *gVSS =
+    "#version 330\n"
+    "uniform mat4 uMSS;\n"
+    "layout (location = 0) in vec4 aPTX;\n"
+    "layout (location = 1) in vec4 aCLR;\n"
+    "out vec4 vCLR;\n"
+    "out vec2 vTEX;\n"
+    "void main() {\n"
+    "    vCLR = aCLR;\n"
+    "    vTEX = vec2(aPTX.z, aPTX.w);\n"
+    "    gl_Position = uMSS * vec4(aPTX.x, aPTX.y, 0, 1);\n"
+    "}\n";
+
+static char const *gFSS =
+    "#version 330\n"
+    "uniform sampler2D sTEX;\n"
+    "in  vec2 vTEX;\n"
+    "in  vec4 vCLR;\n"
+    "out vec4 oCLR;\n"
+    "void main() {\n"
+    "    oCLR = texture(sTEX, vTEX) * vCLR;\n"
+    "}\n";
+
+static void effect_setup(sprite_effect_t *effect, void *context)
+{
+    UNUSED_ARG(context);
+    glUseProgram(gPROGRAM);
+    glDisable(GL_DEPTH_TEST);
+    sprite_effect_bind_buffers(effect);
+    sprite_effect_apply_blendstate(effect);
+}
+
+static void effect_apply_state(sprite_effect_t *effect, uint32_t state, void *context)
+{
+    UNUSED_ARG(effect);
+    UNUSED_ARG(context);
+    set_sampler(sTEX, GLuint(state));
+}
+
+//// TEST CODE
 
 /// @summary Submits a single frame to the GPU for rendering. Runs once per
 /// application tick at a variable timestep.
@@ -102,6 +156,36 @@ static void render(double currentTime, double elapsedTime, double t)
     UNUSED_ARG(t);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    flush_sprite_batch(&gBATCH);
+
+    sprite_t sprite;
+    sprite.ScreenX       = 0.0f;
+    sprite.ScreenY       = 0.0f;
+    sprite.OriginX       = 0.0f;
+    sprite.OriginY       = 0.0f;
+    sprite.ScaleX        = 1.0f;
+    sprite.ScaleY        = 1.0f;
+    sprite.Orientation   = 0.0f;
+    sprite.TintColor     = 0xFFFFFFFFU;
+    sprite.ImageX        = 0;
+    sprite.ImageY        = 0;
+    sprite.ImageWidth    = gTEX->GetWidth();
+    sprite.ImageHeight   = gTEX->GetHeight();
+    sprite.TextureWidth  = gTEX->GetWidth();
+    sprite.TextureHeight = gTEX->GetHeight();
+    sprite.LayerDepth    = 0;
+    sprite.RenderState   = uint32_t(gTEX->GetId());
+
+    ensure_sprite_batch(&gBATCH, 1);
+    generate_quads(gBATCH.Quads, gBATCH.State, 0, &sprite, 0, 1);
+
+    sprite_effect_set_viewport(&gEFFECT, GW_WINDOW_WIDTH, GW_WINDOW_HEIGHT);
+    sprite_effect_apply_t fxfuncs = {
+        effect_setup,
+        effect_apply_state
+    };
+    sprite_effect_draw_batch_ptc(&gEFFECT, &gBATCH, &fxfuncs, NULL);
 }
 
 /*///////////////////////
@@ -165,12 +249,46 @@ int main(int argc, char **argv)
 #endif
 
 
-    // monkey stuff
-    gTEX = new Texture();
-    gTEX->LoadFromFile("assets/test_bg.tga");
+    //// TEST CODE
 
-    gBATCH = new SpriteBatch();
-    gBATCH->CreateGPUResources(2048);
+    gTEX = new Texture();
+    if (gTEX->LoadFromFile("assets/test_bg.tga"))
+    {
+        printf("Texture loaded successfully.\n");
+    }
+    else
+    {
+        printf("Texture failed to load.\n");
+    }
+
+    shader_source_t     sources;
+    shader_source_init(&sources);
+    shader_source_add (&sources, GL_VERTEX_SHADER,   (char**) &gVSS, 1);
+    shader_source_add (&sources, GL_FRAGMENT_SHADER, (char**) &gFSS, 1);
+    if (build_shader(&sources, &gSHADER, &gPROGRAM))
+    {
+        printf("Shader Code compiled successfully.\n");
+        aPTX = find_attribute(&gSHADER, "aPTX");
+        aCLR = find_attribute(&gSHADER, "aCLR");
+        sTEX = find_sampler  (&gSHADER, "sTEX");
+        uMSS = find_uniform  (&gSHADER, "uMSS");
+    }
+    else
+    {
+        printf("Shader Code failed to compile.\n");
+    }
+    if (create_sprite_effect(&gEFFECT, 1024, sizeof(sprite_vertex_ptc_t), sizeof(uint16_t)))
+    {
+        sprite_effect_setup_vao_ptc(&gEFFECT);
+        printf("Created sprite effect.\n");
+    }
+    else
+    {
+        printf("Failed to create sprite effect.\n");
+    }
+    create_sprite_batch(&gBATCH, 1);
+
+    //// TEST CODE
 
     const double   Step = GW_SIM_TIMESTEP;
     double previousTime = glfwGetTime();
@@ -220,11 +338,17 @@ int main(int argc, char **argv)
         glfwPollEvents();
     }
 
+    //// TEST CODE
+
+    delete_sprite_batch(&gBATCH);
+    delete_sprite_effect(&gEFFECT);
+    shader_desc_free(&gSHADER);
+    glDeleteProgram(gPROGRAM);
+
     gTEX->Dispose();
     delete gTEX;
 
-    gBATCH->DeleteGPUResources();
-    delete gBATCH;
+    //// TEST CODE
 
     // perform any top-level cleanup.
     glfwTerminate();
