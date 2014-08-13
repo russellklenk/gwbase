@@ -14,6 +14,7 @@
 #include "display.hpp"
 #include "glsprite.hpp"
 #include "glshader.hpp"
+#include "math.hpp"
 
 /*/////////////////
 //   Constants   //
@@ -101,6 +102,8 @@ static uniform_desc_t   *uMSS = NULL;
 static sprite_effect_t gEFFECT;
 static sprite_batch_t  gBATCH;
 
+static float DEGREES_PER_SEC = 180.0f;
+
 static char const *gVSS =
     "#version 330\n"
     "uniform mat4 uMSS;\n"
@@ -168,13 +171,13 @@ static void render(double currentTime, double elapsedTime, double t, int width, 
     flush_sprite_batch(&gBATCH);
 
     sprite_t sprite;
-    sprite.ScreenX       = 0.0f;
-    sprite.ScreenY       = 0.0f;
-    sprite.OriginX       = 0.0f;
-    sprite.OriginY       = 0.0f;
+    sprite.ScreenX       = width  * 0.5f;
+    sprite.ScreenY       = height * 0.5f;
+    sprite.OriginX       = gTEX->GetWidth()  * 0.5f;
+    sprite.OriginY       = gTEX->GetHeight() * 0.5f;
     sprite.ScaleX        = 1.0f;
     sprite.ScaleY        = 1.0f;
-    sprite.Orientation   = 0.0f;
+    sprite.Orientation   = rad(currentTime * DEGREES_PER_SEC);
     sprite.TintColor     = 0xFFFFFFFFU;
     sprite.ImageX        = 0;
     sprite.ImageY        = 0;
@@ -187,9 +190,10 @@ static void render(double currentTime, double elapsedTime, double t, int width, 
 
     ensure_sprite_batch(&gBATCH, 1);
     generate_quads(gBATCH.Quads, gBATCH.State, 0, &sprite, 0, 1);
+    gBATCH.Order[0] = 0;
     gBATCH.Count = 1;
 
-    sprite_effect_set_viewport(&gEFFECT, 640, 480);
+    sprite_effect_set_viewport(&gEFFECT, width, height);
     sprite_effect_apply_t fxfuncs = {
         effect_setup,
         effect_apply_state

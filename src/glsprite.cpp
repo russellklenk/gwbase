@@ -162,7 +162,7 @@ void generate_quad_vertices_ptc(
             vert.XYUV[0]   = (dst_x + (x_dst * cos_o)) - (y_dst * sin_o);
             vert.XYUV[1]   = (dst_y + (x_dst * sin_o)) + (y_dst * cos_o);
             vert.XYUV[2]   = (src_x + (ofs_x * src_w)) *  scl_u;
-            vert.XYUV[3]   = (src_y + (ofs_y * src_h)) *  scl_v;
+            vert.XYUV[3]   = 1.0f - ((src_y + (ofs_y * src_h)) *  scl_v);
             vert.TintColor = color;
         }
     }
@@ -360,8 +360,8 @@ void sprite_effect_setup_vao_ptc(sprite_effect_t *effect)
     glBindVertexArray(effect->VertexArray);
     glEnableVertexAttribArray(SPRITE_PTC_LOCATION_PTX);
     glEnableVertexAttribArray(SPRITE_PTC_LOCATION_CLR);
-    glVertexAttribPointer(SPRITE_PTC_LOCATION_PTX, 4, GL_FLOAT,         GL_FALSE, 32, (GLvoid const*)  0);
-    glVertexAttribPointer(SPRITE_PTC_LOCATION_CLR, 4, GL_UNSIGNED_BYTE, GL_TRUE,  32, (GLvoid const*) 16);
+    glVertexAttribPointer(SPRITE_PTC_LOCATION_PTX, 4, GL_FLOAT,         GL_FALSE, sizeof(sprite_vertex_ptc_t), (GLvoid const*)  0);
+    glVertexAttribPointer(SPRITE_PTC_LOCATION_CLR, 4, GL_UNSIGNED_BYTE, GL_TRUE,  sizeof(sprite_vertex_ptc_t), (GLvoid const*) 16);
 }
 
 size_t sprite_effect_buffer_data_ptc(
