@@ -80,7 +80,7 @@ void flush_sprite_batch(sprite_batch_t *batch)
     batch->Count = 0;
 }
 
-void generate_quads(quad_t *quads, qsdata_t *sdata, size_t quad_offset, sprite_t const *sprites, size_t sprite_offset, size_t sprite_count)
+void generate_quads(quad_t *quads, qsdata_t *sdata, uint32_t *indices, size_t quad_offset, sprite_t const *sprites, size_t sprite_offset, size_t sprite_count)
 {
     size_t qindex = quad_offset;
     size_t sindex = sprite_offset;
@@ -107,6 +107,8 @@ void generate_quads(quad_t *quads, qsdata_t *sdata, size_t quad_offset, sprite_t
 
         r.LayerDepth  = s.LayerDepth;
         r.RenderState = s.RenderState;
+
+        indices[qindex] = qindex;
     }
 }
 

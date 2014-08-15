@@ -9,33 +9,22 @@
 /*////////////////
 //   Includes   //
 ////////////////*/
-#include <map>
 #include <vector>
 #include "common.hpp"
 #include "platform.hpp"
-#include "glshader.hpp"
-#include "glimage.hpp"
+#include "glshader.hpp" /// low-level shader interface
+#include "glsprite.hpp" /// low-level sprite rendering
+#include "glimage.hpp"  /// low-level pixel transfers
 
 /*////////////////
 //  Data Types  //
 ////////////////*/
-/// @summary A simple structure representing a rectangle.
 struct rect_t
 {
     float X;
     float Y;
     float Width;
     float Height;
-};
-
-/// @summary A bucket of vertex and index data for a batch of sprites.
-/// All sprites in the bucket share the same texture.
-struct sprite_bucket_t
-{
-    std::vector<float>    Vertices;  /// Each vertex is 2 floats.
-    std::vector<float>    TexCoords; /// Each texcoord is 2 floats.
-    std::vector<float>    Colors;    /// Each color is 4 floats.
-    std::vector<uint16_t> Indices;   /// Each sprite is 6 indices.
 };
 
 /// @summary Wraps an OpenGL texture object and provides an interface for
@@ -54,14 +43,34 @@ public:
     virtual ~Texture(void);
 
 public:
+    /// @summary Retrieves the OpenGL texture object identifier.
+    /// @return The OpenGL texture object ID.
     GLuint GetId(void) const { return Id; }
+
+    /// @summary Retrieves the texture coordinate wrapping mode.
+    /// @return The OpenGL texture wrapping mode for all axes.
     GLenum GetWrapMode(void) const { return Wrap; }
+
+    /// @summary Retrieves the texture magnification filter.
+    /// @return The OpenGL texture magnification filter.
     GLenum GetMagnifyFilter(void) const { return Filter; }
+
+    /// @summary Retrieves the width of the texture, in pixels.
+    /// @return The width of the texture object, in pixels.
     size_t GetWidth(void) const { return Width; }
+
+    /// @summary Retrieves the height of the texture, in pixels.
+    /// @return The height of the texture object, in pixels.
     size_t GetHeight(void) const { return Height; }
 
 public:
+    /// @summary Sets the wrapping mode to use for tecture coordinates outside
+    /// the [0, 1] range on both the horizontal and vertical axes.
+    /// @param mode One of GL_CLAMP, GL_CLAMP_TO_EDGE, GL_REPEAT, etc.
     void SetWrapMode(GLenum mode) { Wrap = mode; }
+
+    /// @summary Sets the texture magnification filter to use.
+    /// @param filter One of GL_NEAREST, GL_LINEAR, GL_NEAREST_MIPMAP_NEAREST, etc.
     void SetMagnifyFilter(GLenum filter) { Filter = filter; }
 
 public:
@@ -75,46 +84,106 @@ public:
     virtual void Dispose(void);
 };
 
-/// @summary
+/// @summary Queues sprites for later rendering. Sprites support rotation and
+/// scaling about an origin point.
 class SpriteBatch
 {
 protected:
-    typedef std::map<std::pair<uint8_t,Texture*>,sprite_bucket_t> bucket_map_t;
-
-protected:
-    bucket_map_t      Buckets;
-    attribute_desc_t *AttribPos;      /// Vertex position attribute
-    attribute_desc_t *AttribTex;      /// Vertex texcoord attribute
-    attribute_desc_t *AttribClr;      /// Vertex color attribute
-    uniform_desc_t   *UniformMSS;     /// Matrix Screen Space -> Clip Space
-    sampler_desc_t   *SamplerTex;     /// Diffuse texture sampler
-    shader_desc_t     ShaderDesc;
-    GLuint            ShaderProgram;
-    GLuint            VAO;
-    GLuint            VBOPos;
-    GLuint            VBOTex;
-    GLuint            VBOClr;
-    size_t            BufferOffset;
-    size_t            BufferCapacity;
-    float             Matrix[16];
-
-protected:
-    void FourPoints(std::vector<float> &v, rect_t const &r);
-    void SixIndices(std::vector<uint16_t> &v, uint16_t start);
+    std::vector<sprite_t>  SpriteData; /// A buffer for sprite definitions.
+    GLuint                 Program;    /// The OpenGL program object ID.
+    shader_desc_t          ShaderDesc; /// Metadata about the shader program.
+    attribute_desc_t      *AttribPTX;  /// Information about the Position-Texture attribute.
+    attribute_desc_t      *AttribCLR;  /// Information about the ARGB color attribute.
+    sampler_desc_t        *SamplerTEX; /// Information about the texture sampler.
+    uniform_desc_t        *UniformMSS; /// Information about the screenspace -> clipspace matrix.
+    sprite_effect_t        EffectData; /// Low-level sprite renderer state.
+    sprite_batch_t         BatchData;  /// Low-level sprite batch state.
 
 public:
-    SpriteBatch(void);
+    /// @summary Constructs a new SpriteBatch and creates GPU resources.
+    /// @param The initial capacity of the sprite batch, in number of sprites.
+    SpriteBatch(size_t initial_capacity);
     virtual ~SpriteBatch(void);
 
 public:
-    bool CreateGPUResources(size_t capacity);
-    void DeleteGPUResources(void);
-    void SetProjection(float const *m16);
-    void Draw(uint8_t z, Texture *t, rect_t const &dst, rect_t const &src, float const *rgba);
-    void Draw(uint8_t z, Texture *t, rect_t const &dst, rect_t const &src, float const *rgba, float rot, float ox, float oy);
-    void Draw(uint8_t z, Texture *t, float x, float y, rect_t const &src, float const *rgba);
-    void Draw(uint8_t z, Texture *t, float x, float y, rect_t const &src, float const *rgba, float rot, float ox, float oy, float sx, float sy);
-    void Flush(void);
+    /// @summary Retrieves the information about the texture sampler.
+    /// @return Information about the default texture sampler.
+    sampler_desc_t* GetSampler(void) const
+    {
+        return SamplerTEX;
+    }
+
+public:
+    /// @summary Queues a sprite for rendering.
+    /// @param z The layer depth of the sprite, increasing into the screen.
+    /// @param t The texture containing the sprite image.
+    /// @param dst A rectangle defining the position and size of the sprite on the screen.
+    /// @param src A rectangle defining the position and size of the image on the source texture.
+    /// @param rgba An array of four float values in [0, 1] defining the RGBA tint color.
+    void Add(uint32_t z, Texture *t, rect_t const &dst, rect_t const &src, float const *rgba);
+
+    /// @summary Queues a sprite for rendering.
+    /// @param z The layer depth of the sprite, increasing into the screen.
+    /// @param t The texture containing the sprite image.
+    /// @param dst A rectangle defining the position and size of the sprite on the screen.
+    /// @param src A rectangle defining the position and size of the image on the source texture.
+    /// @param rgba An array of four float values in [0, 1] defining the RGBA tint color.
+    /// @param rot The sprite orientation, in radians. Rotation is performed clockwise.
+    /// @param ox The x-coordinate of the sprite origin, relative to the upper-left corner of the sprite.
+    /// @param oy The y-coordinate of the sprite origin, relative to the upper-left corner of the sprite.
+    void Add(uint32_t z, Texture *t, rect_t const &dst, rect_t const &src, float const *rgba, float rot, float ox, float oy);
+
+    /// @summary Queues a sprite for rendering.
+    /// @param z The layer depth of the sprite, increasing into the screen.
+    /// @param t The texture containing the sprite image.
+    /// @param x The x-coordinate of the sprite, in pixels.
+    /// @param y The y-coordinate of the sprite, in pixels.
+    /// @param src A rectangle defining the position and size of the image on the source texture.
+    /// @param rgba An array of four float values in [0, 1] defining the RGBA tint color.
+    void Add(uint32_t z, Texture *t, float x, float y, rect_t const &src, float const *rgba);
+
+    /// @summary Queues a sprite for rendering.
+    /// @param z The layer depth of the sprite, increasing into the screen.
+    /// @param t The texture containing the sprite image.
+    /// @param x The x-coordinate of the sprite, in pixels.
+    /// @param y The y-coordinate of the sprite, in pixels.
+    /// @param src A rectangle defining the position and size of the image on the source texture.
+    /// @param rgba An array of four float values in [0, 1] defining the RGBA tint color.
+    /// @param rot The sprite orientation, in radians. Rotation is performed clockwise.
+    /// @param ox The x-coordinate of the sprite origin, relative to the upper-left corner of the sprite.
+    /// @param oy The y-coordinate of the sprite origin, relative to the upper-left corner of the sprite.
+    /// @param sx The scale factor to apply along the horizontal axis, 1.0 = no scaling.
+    /// @param sy The scale factor to apply along the vertical axis, 1.0 = no scaling.
+    void Add(uint32_t z, Texture *t, float x, float y, rect_t const &src, float const *rgba, float rot, float ox, float oy, float sx, float sy);
+
+    /// @summary Disables alpha blending. Changing the blend mode flushes the
+    /// current contents of the sprite batch.
+    void SetBlendModeNone(void);
+
+    /// @summary Enables standard alpha blending. Changing the blend mode
+    /// flushes the current contents of the sprite batch.
+    void SetBlendModeAlpha(void);
+
+    /// @summary Enables additive alpha blending. Changing the blend mode
+    /// flushes the current contents of the sprite batch.
+    void SetBlendModeAdditive(void);
+
+    /// @summary Enables premultiplied alpha blending. Changing the blend mode
+    /// flushes the current contents of the sprite batch.
+    void SetBlendModePremultiplied(void);
+
+public:
+    /// @summary Sets the width and height of the viewport. The viewport
+    /// dimensions should be set prior to calling SpriteBatch::Flush().
+    /// @param width The viewport width, in pixels.
+    /// @param height The viewport height, in pixels.
+    virtual void SetViewport(int width, int height);
+
+    /// @summary FLushes the current contents of the sprite batch to the GPU.
+    virtual void Flush(void);
+
+    /// @summary Disposes of resources associated with the sprite batch.
+    virtual void Dispose(void);
 };
 
 /// @summary

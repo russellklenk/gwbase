@@ -31,7 +31,7 @@
 ////////////////*/
 /// @summary A structure representing a single interleaved sprite vertex in
 /// the vertex buffer. The vertex encodes 2D screen space position, texture
-/// coordinate, and packed ARGB color values into 20 bytes per-vertex. The
+/// coordinate, and packed ABGR color values into 20 bytes per-vertex. The
 /// GPU expands the vertex into 32 bytes. Tint color is constant per-sprite.
 #pragma pack(push, 1)
 struct sprite_vertex_ptc_t
@@ -54,7 +54,7 @@ struct sprite_t
     float    ScaleX;            /// The horizontal scale factor.
     float    ScaleY;            /// The vertical scale factor.
     float    Orientation;       /// The angle of orientation, in radians.
-    uint32_t TintColor;         /// The ARGB tint color.
+    uint32_t TintColor;         /// The ABGR tint color.
     uint32_t ImageX;            /// Y-offset of the upper-left corner of the source image.
     uint32_t ImageY;            /// Y-offset of the upper-left corner of the source image.
     uint32_t ImageWidth;        /// The width of the source image, in pixels.
@@ -75,7 +75,7 @@ struct quad_t
     float    Origin[2];         /// The XY origin point of rotation.
     float    Scale[2];          /// Texture coordinate scale factors.
     float    Orientation;       /// The angle of orientation, in radians.
-    uint32_t TintColor;         /// The ARGB tint color.
+    uint32_t TintColor;         /// The ABGR tint color.
 };
 
 /// @summary Data used for sorting buffered quads. Grouped together to improve
@@ -262,6 +262,7 @@ inline void sort_sprite_batch(sprite_batch_t *batch)
 /// @summary Transforms a set of sprite definitions into a series of quad definitions.
 /// @param quads The buffer of quads to write to.
 /// @param sdata The buffer of state data to write to.
+/// @param indices The buffer of order indices to write to.
 /// @param quad_offset The zero-based index of the first quad to write.
 /// @param sprites The buffer of sprite definitions to read from.
 /// @param sprite_offset The zero-based index of the first sprite to read.
@@ -269,6 +270,7 @@ inline void sort_sprite_batch(sprite_batch_t *batch)
 void generate_quads(
     quad_t         *quads,
     qsdata_t       *sdata,
+    uint32_t       *indices,
     size_t          quad_offset,
     sprite_t const *sprites,
     size_t          sprite_offset,

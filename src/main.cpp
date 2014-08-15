@@ -91,8 +91,9 @@ static void simulate(double currentTime, double elapsedTime)
 //// TEST CODE
 
 static Texture *gTEX = NULL;
+static SpriteBatch *gBATCH = NULL;
 
-static GLuint            gPROGRAM;
+/*static GLuint            gPROGRAM;
 static shader_desc_t     gSHADER;
 static attribute_desc_t *aPTX = NULL;
 static attribute_desc_t *aCLR = NULL;
@@ -100,11 +101,11 @@ static sampler_desc_t   *sTEX = NULL;
 static uniform_desc_t   *uMSS = NULL;
 
 static sprite_effect_t gEFFECT;
-static sprite_batch_t  gBATCH;
+static sprite_batch_t  gBATCH;*/
 
 static float DEGREES_PER_SEC = 180.0f;
 
-static char const *gVSS =
+/*static char const *gVSS =
     "#version 330\n"
     "uniform mat4 uMSS;\n"
     "layout (location = 0) in vec4 aPTX;\n"
@@ -114,7 +115,7 @@ static char const *gVSS =
     "void main() {\n"
     "    vCLR = aCLR;\n"
     "    vTEX = vec2(aPTX.z, aPTX.w);\n"
-    "    gl_Position = uMSS * vec4(aPTX.x, aPTX.y, 1, 1);\n"
+    "    gl_Position = uMSS * vec4(aPTX.x, aPTX.y, 0, 1);\n"
     "}\n";
 
 static char const *gFSS =
@@ -131,8 +132,9 @@ static void effect_setup(sprite_effect_t *effect, void *context)
 {
     UNUSED_ARG(context);
     glUseProgram(gPROGRAM);
+    glEnable(GL_CULL_FACE);
+    glFrontFace(GL_CCW);
     glDisable(GL_DEPTH_TEST);
-    glDisable(GL_CULL_FACE);
     sprite_effect_bind_buffers(effect);
     sprite_effect_apply_blendstate(effect);
     set_uniform(uMSS, effect->Projection, false);
@@ -143,7 +145,7 @@ static void effect_apply_state(sprite_effect_t *effect, uint32_t state, void *co
     UNUSED_ARG(effect);
     UNUSED_ARG(context);
     set_sampler(sTEX, GLuint(state));
-}
+}*/
 
 //// TEST CODE
 
@@ -168,7 +170,20 @@ static void render(double currentTime, double elapsedTime, double t, int width, 
     glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    flush_sprite_batch(&gBATCH);
+    rect_t src   = { 0, 0, gTEX->GetWidth(), gTEX->GetHeight() };
+    float rgba[] = { 1.0f, 1.0f, 1.0f, 0.5f };
+
+    gBATCH->SetBlendModeNone();
+    gBATCH->SetViewport(width, height);
+
+    gBATCH->Add(1, gTEX, width * 0.5f, height * 0.5f, src, rgba,
+        rad(currentTime * DEGREES_PER_SEC),
+        gTEX->GetWidth() * 0.5f, gTEX->GetHeight() * 0.5f,
+        1.0f, 1.0f);
+
+    gBATCH->Flush();
+
+    /*flush_sprite_batch(&gBATCH);
 
     sprite_t sprite;
     sprite.ScreenX       = width  * 0.5f;
@@ -189,8 +204,7 @@ static void render(double currentTime, double elapsedTime, double t, int width, 
     sprite.RenderState   = uint32_t(gTEX->GetId());
 
     ensure_sprite_batch(&gBATCH, 1);
-    generate_quads(gBATCH.Quads, gBATCH.State, 0, &sprite, 0, 1);
-    gBATCH.Order[0] = 0;
+    generate_quads(gBATCH.Quads, gBATCH.State, gBATCH.Order, 0, &sprite, 0, 1);
     gBATCH.Count = 1;
 
     sprite_effect_set_viewport(&gEFFECT, width, height);
@@ -198,7 +212,7 @@ static void render(double currentTime, double elapsedTime, double t, int width, 
         effect_setup,
         effect_apply_state
     };
-    sprite_effect_draw_batch_ptc(&gEFFECT, &gBATCH, &fxfuncs, NULL);
+    sprite_effect_draw_batch_ptc(&gEFFECT, &gBATCH, &fxfuncs, NULL);*/
 
     //// TEST CODE
 }
@@ -276,7 +290,9 @@ int main(int argc, char **argv)
         printf("Texture failed to load.\n");
     }
 
-    shader_source_t     sources;
+    gBATCH = new SpriteBatch(1024);
+
+    /*shader_source_t     sources;
     shader_source_init(&sources);
     shader_source_add (&sources, GL_VERTEX_SHADER,   (char**) &gVSS, 1);
     shader_source_add (&sources, GL_FRAGMENT_SHADER, (char**) &gFSS, 1);
@@ -301,7 +317,7 @@ int main(int argc, char **argv)
     {
         printf("Failed to create sprite effect.\n");
     }
-    create_sprite_batch(&gBATCH, 1);
+    create_sprite_batch(&gBATCH, 1);*/
 
     //// TEST CODE
 
@@ -361,10 +377,13 @@ int main(int argc, char **argv)
 
     //// TEST CODE
 
-    delete_sprite_batch(&gBATCH);
+    /*delete_sprite_batch(&gBATCH);
     delete_sprite_effect(&gEFFECT);
     shader_desc_free(&gSHADER);
-    glDeleteProgram(gPROGRAM);
+    glDeleteProgram(gPROGRAM);*/
+
+    gBATCH->Dispose();
+    delete gBATCH;
 
     gTEX->Dispose();
     delete gTEX;

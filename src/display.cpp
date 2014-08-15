@@ -19,21 +19,20 @@
 /////////////////*/
 static char const *SpriteBatch_VSS =
     "#version 330\n"
-    "uniform  mat4 uMSS;\n"
-    "layout (location = 0) in vec2 aPOS;\n"
-    "layout (location = 1) in vec2 aTEX;\n"
-    "layout (location = 2) in vec4 aCLR;\n"
+    "uniform mat4 uMSS;\n"
+    "layout (location = 0) in vec4 aPTX;\n"
+    "layout (location = 1) in vec4 aCLR;\n"
     "out vec4 vCLR;\n"
     "out vec2 vTEX;\n"
     "void main() {\n"
     "    vCLR = aCLR;\n"
-    "    vTEX = vec2(aTEX.x, aTEX.y);\n"
-    "    gl_Position = uMSS * vec4(aPOS.x, aPOS.y, 0, 1);\n"
+    "    vTEX = vec2(aPTX.z, aPTX.w);\n"
+    "    gl_Position = uMSS * vec4(aPTX.x, aPTX.y, 0, 1);\n"
     "}\n";
 
 static char const *SpriteBatch_FSS =
     "#version 330\n"
-    "uniform sampler2D  sTEX;\n"
+    "uniform sampler2D sTEX;\n"
     "in  vec2 vTEX;\n"
     "in  vec4 vCLR;\n"
     "out vec4 oCLR;\n"
@@ -151,288 +150,217 @@ void Texture::Dispose(void)
     }
 }
 
-SpriteBatch::SpriteBatch(void)
+SpriteBatch::SpriteBatch(size_t initial_capacity)
     :
-    AttribPos(NULL),
-    AttribTex(NULL),
-    AttribClr(NULL),
-    UniformMSS(NULL),
-    SamplerTex(NULL),
-    ShaderProgram(0),
-    VAO(0),
-    VBOPos(0),
-    VBOTex(0),
-    VBOClr(0),
-    BufferOffset(0),
-    BufferCapacity(0)
+    Program(0),
+    AttribPTX(NULL),
+    AttribCLR(NULL),
+    SamplerTEX(NULL),
+    UniformMSS(NULL)
 {
-    /* empty */
+    SpriteData.reserve(initial_capacity);
+
+    shader_source_t sources;
+    shader_source_init(&sources);
+    shader_source_add(&sources, GL_VERTEX_SHADER, (char**) &SpriteBatch_VSS, 1);
+    shader_source_add(&sources, GL_FRAGMENT_SHADER, (char**) &SpriteBatch_FSS, 1);
+    build_shader(&sources, &ShaderDesc, &Program);
+    AttribPTX  = find_attribute(&ShaderDesc, "aPTX");
+    AttribCLR  = find_attribute(&ShaderDesc, "aCLR");
+    SamplerTEX = find_sampler(&ShaderDesc, "sTEX");
+    UniformMSS = find_uniform(&ShaderDesc, "uMSS");
+
+    create_sprite_batch(&BatchData, initial_capacity);
+    create_sprite_effect(&EffectData, initial_capacity, sizeof(sprite_vertex_ptc_t), sizeof(uint16_t));
+    sprite_effect_setup_vao_ptc(&EffectData);
 }
 
 SpriteBatch::~SpriteBatch(void)
 {
-    DeleteGPUResources();
+    Dispose();
 }
 
-void SpriteBatch::FourPoints(std::vector<float> &v, rect_t const &rect)
+void SpriteBatch::Dispose(void)
 {
-    v.push_back(rect.X);
-    v.push_back(rect.Y);
-    v.push_back(rect.X + rect.Width);
-    v.push_back(rect.Y);
-    v.push_back(rect.X + rect.Width);
-    v.push_back(rect.Y + rect.Height);
-    v.push_back(rect.X);
-    v.push_back(rect.Y + rect.Height);
-}
-
-void SpriteBatch::SixIndices(std::vector<uint16_t> &v, uint16_t start)
-{
-    v.push_back(start + 0);
-    v.push_back(start + 2);
-    v.push_back(start + 1);
-    v.push_back(start + 0);
-    v.push_back(start + 3);
-    v.push_back(start + 2);
-}
-
-bool SpriteBatch::CreateGPUResources(size_t capacity)
-{
-    shader_source_t     sources;
-    shader_source_init(&sources);
-    shader_source_add (&sources, GL_VERTEX_SHADER,   (char**) &SpriteBatch_VSS, 1);
-    shader_source_add (&sources, GL_FRAGMENT_SHADER, (char**) &SpriteBatch_FSS, 1);
-    if (build_shader(&sources, &ShaderDesc, &ShaderProgram))
+    if (Program)
     {
-        AttribPos  = find_attribute(&ShaderDesc, "aPOS");
-        AttribTex  = find_attribute(&ShaderDesc, "aTEX");
-        AttribClr  = find_attribute(&ShaderDesc, "aCLR");
-        SamplerTex = find_sampler  (&ShaderDesc, "sTEX");
-        UniformMSS = find_uniform  (&ShaderDesc, "uMSS");
-
-        glGenVertexArrays(1, &VAO);
-        glBindVertexArray(VAO);
-
-        glGenBuffers(1, &VBOPos);
-        glBindBuffer(GL_ARRAY_BUFFER, VBOPos);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 2 * capacity, NULL, GL_STREAM_DRAW);
-        glEnableVertexAttribArray(AttribPos->Location);
-        glVertexAttribPointer(AttribPos->Location, 2, GL_FLOAT, GL_FALSE, 0, GL_BUFFER_OFFSET(0));
-
-        glGenBuffers(1, &VBOTex);
-        glBindBuffer(GL_ARRAY_BUFFER, VBOTex);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 2 * capacity, NULL, GL_STREAM_DRAW);
-        glEnableVertexAttribArray(AttribTex->Location);
-        glVertexAttribPointer(AttribTex->Location, 2, GL_FLOAT, GL_FALSE, 0, GL_BUFFER_OFFSET(0));
-
-        glGenBuffers(1, &VBOClr);
-        glBindBuffer(GL_ARRAY_BUFFER, VBOClr);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 4 * capacity, NULL, GL_STREAM_DRAW);
-        glEnableVertexAttribArray(AttribClr->Location);
-        glVertexAttribPointer(AttribClr->Location, 4, GL_FLOAT, GL_FALSE, 0, GL_BUFFER_OFFSET(0));
-
-        BufferOffset   = 0;
-        BufferCapacity = capacity;
-        return true;
-    }
-    else return false;
-}
-
-void SpriteBatch::DeleteGPUResources(void)
-{
-    if (VAO)
-    {
-        glDeleteVertexArrays(1, &VAO);
-        VAO = 0;
-    }
-    if (VBOPos)
-    {
-        glDeleteBuffers(1, &VBOPos);
-        VBOPos = 0;
-    }
-    if (VBOTex)
-    {
-        glDeleteBuffers(1, &VBOTex);
-        VBOTex = 0;
-    }
-    if (VBOClr)
-    {
-        glDeleteBuffers(1, &VBOClr);
-        VBOClr = 0;
-    }
-    if (ShaderProgram)
-    {
+        delete_sprite_effect(&EffectData);
+        delete_sprite_batch(&BatchData);
         shader_desc_free(&ShaderDesc);
-        glDeleteProgram(ShaderProgram);
-        ShaderProgram = 0;
+        glDeleteProgram(Program);
+        SpriteData.clear();
+        AttribPTX  = NULL;
+        AttribCLR  = NULL;
+        SamplerTEX = NULL;
+        UniformMSS = NULL;
     }
 }
 
-void SpriteBatch::SetProjection(float const *m16)
+void SpriteBatch::SetViewport(int width, int height)
 {
-    mat4_set_mat4(Matrix, m16);
+    sprite_effect_set_viewport(&EffectData, width, height);
 }
 
-void SpriteBatch::Draw(uint8_t z, Texture *t, rect_t const &dst, rect_t const &src, float const *rgba)
+static uint32_t color32(float const *rgba)
 {
-    std::pair<uint8_t, Texture*> key(z, t);
-    sprite_bucket_t &ref = Buckets[key];
-    size_t index = ref.Vertices.size();
-
-    FourPoints(ref.Vertices, dst);
-
-    rect_t uv = {
-        src.X      / t->GetWidth(),
-        src.Y      / t->GetHeight(),
-        src.Width  / t->GetWidth(),
-        src.Height / t->GetHeight()
-    };
-    FourPoints(ref.TexCoords, uv);
-
-    ref.Colors.push_back(rgba[0]);
-    ref.Colors.push_back(rgba[1]);
-    ref.Colors.push_back(rgba[2]);
-    ref.Colors.push_back(rgba[3]);
-
-    SixIndices(ref.Indices, uint16_t(index));
+    uint32_t r = (uint32_t) clamp(rgba[0] * 255.0f, 0.0f, 255.0f);
+    uint32_t g = (uint32_t) clamp(rgba[1] * 255.0f, 0.0f, 255.0f);
+    uint32_t b = (uint32_t) clamp(rgba[2] * 255.0f, 0.0f, 255.0f);
+    uint32_t a = (uint32_t) clamp(rgba[3] * 255.0f, 0.0f, 255.0f);
+    return ((a << 24) | (b << 16) | (g << 8) | r);
 }
 
-void SpriteBatch::Draw(uint8_t z, Texture *t, float x, float y, rect_t const &src, float const *rgba)
+void SpriteBatch::Add(uint32_t z, Texture *t, rect_t const &dst, rect_t const &src, float const *rgba)
 {
-    rect_t dst = { x, y, src.Width, src.Height };
-    Draw(z, t, dst, src, rgba);
+    sprite_t sprite;
+    sprite.ScreenX       = dst.X;
+    sprite.ScreenY       = dst.Y;
+    sprite.OriginX       = 0.0f;
+    sprite.OriginY       = 0.0f;
+    sprite.ScaleX        = 1.0f;
+    sprite.ScaleY        = 1.0f;
+    sprite.Orientation   = 0.0f;
+    sprite.TintColor     = color32(rgba);
+    sprite.ImageX        = src.X;
+    sprite.ImageY        = src.Y;
+    sprite.ImageWidth    = src.Width;
+    sprite.ImageHeight   = src.Height;
+    sprite.TextureWidth  = t->GetWidth();
+    sprite.TextureHeight = t->GetHeight();
+    sprite.LayerDepth    = z;
+    sprite.RenderState   = uint32_t(t->GetId());
+    SpriteData.push_back(sprite);
 }
 
-void SpriteBatch::Draw(uint8_t z, Texture *t, rect_t const &dst, rect_t const &src, float const *rgba, float rot, float ox, float oy)
+void SpriteBatch::Add(uint32_t z, Texture *t, float x, float y, rect_t const &src, float const *rgba)
 {
-    std::pair<uint8_t, Texture*> key(z, t);
-    sprite_bucket_t& ref = Buckets[key];
-    size_t index = ref.Vertices.size();
-
-    FourPoints(ref.Vertices, dst);
-
-    float so = sinf(rot);
-    float co = cosf(rot);
-    for (size_t i = 0; i < 4; ++i)
-    {
-        float in_x = ref.Vertices[index + (i * 2) + 0] - dst.X - ox;
-        float in_y = ref.Vertices[index + (i * 2) + 1] - dst.Y - oy;
-        float tx_x = dst.X + (in_x * co)- (in_y * so);
-        float tx_y = dst.Y + (in_x * so)+ (in_y * co);
-        ref.Vertices[index + (i * 2)+0] =  tx_x;
-        ref.Vertices[index + (i * 2)+1] =  tx_y;
-    }
-
-    rect_t uv = {
-        src.X      / t->GetWidth(),
-        src.Y      / t->GetHeight(),
-        src.Width  / t->GetWidth(),
-        src.Height / t->GetHeight()
-    };
-    FourPoints(ref.TexCoords, uv);
-
-    ref.Colors.push_back(rgba[0]);
-    ref.Colors.push_back(rgba[1]);
-    ref.Colors.push_back(rgba[2]);
-    ref.Colors.push_back(rgba[3]);
-
-    SixIndices(ref.Indices, uint16_t(index));
+    sprite_t sprite;
+    sprite.ScreenX       = x;
+    sprite.ScreenY       = y;
+    sprite.OriginX       = 0.0f;
+    sprite.OriginY       = 0.0f;
+    sprite.ScaleX        = 1.0f;
+    sprite.ScaleY        = 1.0f;
+    sprite.Orientation   = 0.0f;
+    sprite.TintColor     = color32(rgba);
+    sprite.ImageX        = src.X;
+    sprite.ImageY        = src.Y;
+    sprite.ImageWidth    = src.Width;
+    sprite.ImageHeight   = src.Height;
+    sprite.TextureWidth  = t->GetWidth();
+    sprite.TextureHeight = t->GetHeight();
+    sprite.LayerDepth    = z;
+    sprite.RenderState   = uint32_t(t->GetId());
+    SpriteData.push_back(sprite);
 }
 
-void SpriteBatch::Draw(uint8_t z, Texture *t, float x, float y, rect_t const &src, float const *rgba, float rot, float ox, float oy, float sx, float sy)
+void SpriteBatch::Add(uint32_t z, Texture *t, rect_t const &dst, rect_t const &src, float const *rgba, float rot, float ox, float oy)
 {
-    float origin_x = ox * sx;
-    float origin_y = oy * sy;
-    rect_t dst = { x, y, src.Width * sx, src.Height * sy };
-    Draw(z, t, dst, src, rgba, rot, origin_x, origin_y);
+    sprite_t sprite;
+    sprite.ScreenX       = dst.X;
+    sprite.ScreenY       = dst.Y;
+    sprite.OriginX       = ox;
+    sprite.OriginY       = oy;
+    sprite.ScaleX        = 1.0f;
+    sprite.ScaleY        = 1.0f;
+    sprite.Orientation   = rot;
+    sprite.TintColor     = color32(rgba);
+    sprite.ImageX        = src.X;
+    sprite.ImageY        = src.Y;
+    sprite.ImageWidth    = src.Width;
+    sprite.ImageHeight   = src.Height;
+    sprite.TextureWidth  = t->GetWidth();
+    sprite.TextureHeight = t->GetHeight();
+    sprite.LayerDepth    = z;
+    sprite.RenderState   = uint32_t(t->GetId());
+    SpriteData.push_back(sprite);
+}
+
+void SpriteBatch::Add(uint32_t z, Texture *t, float x, float y, rect_t const &src, float const *rgba, float rot, float ox, float oy, float sx, float sy)
+{
+    sprite_t sprite;
+    sprite.ScreenX       = x;
+    sprite.ScreenY       = y;
+    sprite.OriginX       = ox;
+    sprite.OriginY       = oy;
+    sprite.ScaleX        = sx;
+    sprite.ScaleY        = sy;
+    sprite.Orientation   = rot;
+    sprite.TintColor     = color32(rgba);
+    sprite.ImageX        = src.X;
+    sprite.ImageY        = src.Y;
+    sprite.ImageWidth    = src.Width;
+    sprite.ImageHeight   = src.Height;
+    sprite.TextureWidth  = t->GetWidth();
+    sprite.TextureHeight = t->GetHeight();
+    sprite.LayerDepth    = z;
+    sprite.RenderState   = uint32_t(t->GetId());
+    SpriteData.push_back(sprite);
+}
+
+void SpriteBatch::SetBlendModeNone(void)
+{
+    Flush();
+    sprite_effect_blend_none(&EffectData);
+}
+
+void SpriteBatch::SetBlendModeAlpha(void)
+{
+    Flush();
+    sprite_effect_blend_alpha(&EffectData);
+}
+
+void SpriteBatch::SetBlendModeAdditive(void)
+{
+    Flush();
+    sprite_effect_blend_additive(&EffectData);
+}
+
+void SpriteBatch::SetBlendModePremultiplied(void)
+{
+    Flush();
+    sprite_effect_blend_premultiplied(&EffectData);
+}
+
+static void sprite_effect_setup(sprite_effect_t *effect, void *context)
+{
+    UNUSED_ARG(effect);
+    UNUSED_ARG(context);
+}
+
+static void sprite_effect_apply_state(sprite_effect_t *effect, uint32_t state, void *context)
+{
+    UNUSED_ARG(effect);
+    SpriteBatch *batch = (SpriteBatch*) context;
+    set_sampler (batch->GetSampler(), GLuint(state));
 }
 
 void SpriteBatch::Flush(void)
 {
-    if (!Buckets.empty())
+    uint32_t count = uint32_t(SpriteData.size());
+    if (count > 0)
     {
-        glBindVertexArray(VAO);
-        glUseProgram(ShaderProgram);
-        set_uniform(UniformMSS, Matrix, false);
-        for (bucket_map_t::iterator iter = Buckets.begin(); iter != Buckets.end(); ++iter)
-        {
-            if (!(*iter).second.Vertices.empty())
-            {
-                set_sampler(SamplerTex, (*iter).first.second->GetId());
+        sprite_effect_apply_t fxfuncs = {
+            sprite_effect_setup,
+            sprite_effect_apply_state
+        };
 
-                // copy data into the vertex arrays.
-                size_t offset = BufferOffset;
-                size_t vcount = (*iter).second.Vertices.size() / 8;
-                size_t pcount = (*iter).second.Indices.size()  / 6;
-                size_t nverts = 0;
-                size_t nprims = 0;
-                size_t pindex = 0;
-                size_t tindex = 0;
-                size_t cindex = 0;
-                size_t iindex = 0;
+        glFrontFace(GL_CCW);
+        glUseProgram(Program);
+        glEnable(GL_CULL_FACE);
+        glDisable(GL_DEPTH_TEST);
+        sprite_effect_bind_buffers(&EffectData);
+        sprite_effect_apply_blendstate(&EffectData);
+        set_uniform(UniformMSS, EffectData.Projection, false);
 
-                while (vcount > 0)
-                {
-                    if ((offset + vcount) <= BufferCapacity)
-                    {
-                        // there's sufficient space in the buffer.
-                        nverts = vcount;
-                        nprims = pcount;
-                    }
-                    else
-                    {
-                        // not enough space in the buffer for all vertices.
-                        nverts = BufferCapacity - BufferOffset;
-                        nprims = nverts / 4;
-                    }
+        ensure_sprite_batch(&BatchData, count);
+        generate_quads(BatchData.Quads, BatchData.State, BatchData.Order, 0, &SpriteData[0], 0, count);
+        BatchData.Count = count;
 
-                    glBindBuffer(GL_ARRAY_BUFFER, VBOPos);
-                    size_t num = nverts * sizeof(float);
-                    size_t ofs = offset * sizeof(float);
-                    float *pos = (float*) glMapBufferRange(GL_ARRAY_BUFFER, ofs * 2, num * 2, GL_MAP_READ_BIT);
-                    memcpy(pos, &(*iter).second.Vertices[pindex], num * 2);
-                    glUnmapBuffer(GL_ARRAY_BUFFER);
+        sprite_effect_draw_batch_ptc(&EffectData, &BatchData, &fxfuncs, this);
 
-                    glBindBuffer(GL_ARRAY_BUFFER, VBOTex);
-                    float *tex = (float*) glMapBufferRange(GL_ARRAY_BUFFER, ofs * 2, num * 2, GL_MAP_READ_BIT);
-                    memcpy(tex, &(*iter).second.TexCoords[tindex], num * 2);
-                    glUnmapBuffer(GL_ARRAY_BUFFER);
-
-                    glBindBuffer(GL_ARRAY_BUFFER, VBOClr);
-                    float *clr = (float*) glMapBufferRange(GL_ARRAY_BUFFER, ofs * 4, num * 4, GL_MAP_READ_BIT);
-                    memcpy(clr, &(*iter).second.Colors[cindex], num * 4);
-                    glUnmapBuffer(GL_ARRAY_BUFFER);
-
-                    glDrawElements(GL_TRIANGLES, nprims * 6, GL_UNSIGNED_SHORT, &(*iter).second.Indices[iindex]);
-
-                    offset += nverts;
-                    vcount -= nverts;
-                    pcount -= nprims;
-                    pindex += nverts * 2;
-                    tindex += nverts * 2;
-                    cindex += nverts * 4;
-                    iindex += nprims * 6;
-                    BufferOffset += nverts;
-
-                    if (BufferOffset == BufferCapacity)
-                    {
-                        // orphan the vertex buffers.
-                        glBindBuffer(GL_ARRAY_BUFFER, VBOPos);
-                        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 2 * BufferCapacity, NULL, GL_STREAM_DRAW);
-                        glBindBuffer(GL_ARRAY_BUFFER, VBOTex);
-                        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 2 * BufferCapacity, NULL, GL_STREAM_DRAW);
-                        glBindBuffer(GL_ARRAY_BUFFER, VBOClr);
-                        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 4 * BufferCapacity, NULL, GL_STREAM_DRAW);
-                        BufferOffset = 0;
-                    }
-                }
-
-                (*iter).second.Vertices.clear();
-                (*iter).second.TexCoords.clear();
-                (*iter).second.Colors.clear();
-                (*iter).second.Indices.clear();
-            }
-        }
+        flush_sprite_batch(&BatchData);
+        SpriteData.clear();
     }
 }
 
