@@ -115,9 +115,10 @@ static void render(double currentTime, double elapsedTime, double t, int width, 
 
     dm->SetViewport(width, height);
     dm->Clear(0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0);
+    dm->BeginFrame();
     batch->SetBlendModeAlpha();
     font->Draw("Hello, world!", 0, 0, 1, rgba, 5.0f, 5.0f, batch);
-    batch->Flush();
+    dm->EndFrame();
 }
 
 /*///////////////////////

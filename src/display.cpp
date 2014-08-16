@@ -498,10 +498,20 @@ void DisplayManager::Clear(float r, float g, float b, float a, float z, uint8_t 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
+void DisplayManager::BeginFrame(void)
+{
+    DefaultBatch->SetBlendModeNone();
+}
+
 void DisplayManager::SetViewport(int width, int height)
 {
     glViewport(0, 0, width, height);
     DefaultBatch->SetViewport(width, height);
+}
+
+void DisplayManager::EndFrame(void)
+{
+    DefaultBatch->Flush();
 }
 
 void DisplayManager::Shutdown(void)

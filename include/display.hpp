@@ -301,10 +301,16 @@ public:
     /// @param s The stencil clear value, in [0, 255].
     void Clear(float r, float g, float b, float a, float z, uint8_t s);
 
+    /// @summary Called at the start of the frame to set the default render state.
+    void BeginFrame(void);
+
     /// @summary Sets the current viewport attributes.
     /// @param width The viewport width, in pixels.
     /// @param height The viewport height, in pixels.
     void SetViewport(int width, int height);
+
+    /// @summary Called at the end of the frame to flush all display output.
+    void EndFrame(void);
 
     /// @summary Releases display resources.
     void Shutdown(void);
