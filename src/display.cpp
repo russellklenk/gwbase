@@ -425,7 +425,7 @@ void SpriteFont::Measure(std::string const &str, rect_t *bounds)
     bounds->Height = nlines * SpacingY;
 }
 
-void SpriteFont::Draw(std::string const &str, float x, float y, uint32_t z, float const *rgba, SpriteBatch *batch)
+void SpriteFont::Draw(std::string const &str, float x, float y, uint32_t z, float const *rgba, float sx, float sy, SpriteBatch *batch)
 {
     float  cur_x  = x;
     float  cur_y  = y;
@@ -444,13 +444,13 @@ void SpriteFont::Draw(std::string const &str, float x, float y, uint32_t z, floa
                 SourceRect.Y + sr * CharHeight,
                 CharWidth, CharHeight
             };
-            batch->Add(z, GlyphTexture, cur_x, cur_y, src, rgba);
-            cur_x += SpacingX;
+            batch->Add(z, GlyphTexture, cur_x, cur_y, src, rgba, 0, 0, 0, sx, sy);
+            cur_x += SpacingX * sx;
         }
         else
         {
             cur_x  = x;
-            cur_y += SpacingY;
+            cur_y += SpacingY * sy;
         }
     }
 }

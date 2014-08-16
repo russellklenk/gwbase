@@ -185,7 +185,7 @@ static void render(double currentTime, double elapsedTime, double t, int width, 
 
     gBATCH->SetBlendModeAlpha();
     float rgba2[] = { 1.0f, 0.0f, 0.0f, 1.0f };
-    gFONT->Draw("Hello, world!", 0, 0, 1, rgba2, gBATCH);
+    gFONT->Draw("Hello, world!", 0, 0, 1, rgba2, 5.0f, 5.0f, gBATCH);
 
     gBATCH->Flush();
 

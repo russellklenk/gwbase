@@ -258,9 +258,12 @@ public:
     /// @param str The string for which sprites will be generated.
     /// @param x The x-coordinate of the upper-left corner of the first character.
     /// @param y The y-coordinate of the upper-left corner of the first character.
+    /// @param z The layer depth of the glyph sprites.
     /// @param rgba The RGBA tint color for the glyph sprites.
+    /// @param sx The horizontal scale factor for the glyph sprites, 1.0 = no scaling.
+    /// @param sy The vertical scale factor for the glyph sprites, 1.0 = no scaling.
     /// @param batch The target sprite batch.
-    void Draw(std::string const &str, float x, float y, uint32_t z, float const *rgba, SpriteBatch *batch);
+    void Draw(std::string const &str, float x, float y, uint32_t z, float const *rgba, float sx, float sy, SpriteBatch *batch);
 };
 
 /// @summary
