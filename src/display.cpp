@@ -364,6 +364,97 @@ void SpriteBatch::Flush(void)
     }
 }
 
+SpriteFont::SpriteFont(void)
+    :
+    GlyphTexture(NULL),
+    CharWidth(0),
+    CharHeight(0),
+    SpacingX(0),
+    SpacingY(0),
+    FirstChar(0),
+    LastChar(0)
+{
+    /* empty */
+}
+
+SpriteFont::~SpriteFont(void)
+{
+    /* empty */
+}
+
+void SpriteFont::SetSource(Texture *t, float chw, float chh, float sx, float sy, char first, char last)
+{
+    GlyphTexture      = t;
+    SourceRect.X      = 0;
+    SourceRect.Y      = 0;
+    SourceRect.Width  = (float) t->GetWidth();
+    SourceRect.Height = (float) t->GetHeight();
+    CharWidth         = chw;
+    CharHeight        = chh;
+    SpacingX          = sx;
+    SpacingY          = sy;
+    FirstChar         = first;
+    LastChar          = last;
+}
+
+void SpriteFont::Measure(std::string const &str, rect_t *bounds)
+{
+    size_t maxcol = 1;
+    size_t curcol = 0;
+    size_t nlines = 1;
+    size_t nchars = str.length();
+
+    for (size_t i = 0; i < nchars; ++i)
+    {
+        curcol++;
+        if (str[i] == '\n')
+        {
+            if (curcol > maxcol)
+            {
+                maxcol = curcol - 1;
+            }
+            curcol = 0;
+            nlines++;
+        }
+    }
+    if (curcol > maxcol)
+    {
+        maxcol = curcol;
+    }
+    bounds->Width  = maxcol * SpacingX;
+    bounds->Height = nlines * SpacingY;
+}
+
+void SpriteFont::Draw(std::string const &str, float x, float y, uint32_t z, float const *rgba, SpriteBatch *batch)
+{
+    float  cur_x  = x;
+    float  cur_y  = y;
+    size_t nchars = str.length();
+    size_t maxcol = GlyphTexture->GetWidth() / CharWidth;
+    for (size_t i = 0; i < nchars; ++i)
+    {
+        char ch = str[i];
+        if (ch != '\n')
+        {
+            uint8_t chi = uint8_t(ch - FirstChar);
+            uint8_t sc  = chi % maxcol; // column on source texture
+            uint8_t sr  = chi / maxcol; // row on source texture
+            rect_t src  = {
+                SourceRect.X + sc * CharWidth,
+                SourceRect.Y + sr * CharHeight,
+                CharWidth, CharHeight
+            };
+            batch->Add(z, GlyphTexture, cur_x, cur_y, src, rgba);
+            cur_x += SpacingX;
+        }
+        else
+        {
+            cur_x  = x;
+            cur_y += SpacingY;
+        }
+    }
+}
+
 DisplayManager::DisplayManager(void)
     :
     main_window(NULL)

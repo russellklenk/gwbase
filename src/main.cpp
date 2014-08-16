@@ -91,7 +91,9 @@ static void simulate(double currentTime, double elapsedTime)
 //// TEST CODE
 
 static Texture *gTEX = NULL;
+static Texture *gFTEX = NULL;
 static SpriteBatch *gBATCH = NULL;
+static SpriteFont *gFONT = NULL;
 
 /*static GLuint            gPROGRAM;
 static shader_desc_t     gSHADER;
@@ -180,6 +182,10 @@ static void render(double currentTime, double elapsedTime, double t, int width, 
         rad(currentTime * DEGREES_PER_SEC),
         gTEX->GetWidth() * 0.5f, gTEX->GetHeight() * 0.5f,
         1.0f, 1.0f);
+
+    gBATCH->SetBlendModeAlpha();
+    float rgba2[] = { 1.0f, 0.0f, 0.0f, 1.0f };
+    gFONT->Draw("Hello, world!", 0, 0, 1, rgba2, gBATCH);
 
     gBATCH->Flush();
 
@@ -285,10 +291,17 @@ int main(int argc, char **argv)
     {
         printf("Texture loaded successfully.\n");
     }
-    else
+    else printf("Texture failed to load.\n");
+
+    gFTEX = new Texture();
+    if (gFTEX->LoadFromFile("assets/font.tga"))
     {
-        printf("Texture failed to load.\n");
+        printf("Font texture loaded successfully.\n");
     }
+    else printf("Font texture failed to load.\n");
+
+    gFONT = new SpriteFont();
+    gFONT->SetSource(gFTEX, 8, 12, 6, 10, ' ', '~');
 
     gBATCH = new SpriteBatch(1024);
 
@@ -382,10 +395,9 @@ int main(int argc, char **argv)
     shader_desc_free(&gSHADER);
     glDeleteProgram(gPROGRAM);*/
 
-    gBATCH->Dispose();
     delete gBATCH;
-
-    gTEX->Dispose();
+    delete gFONT;
+    delete gFTEX;
     delete gTEX;
 
     //// TEST CODE

@@ -9,6 +9,7 @@
 /*////////////////
 //   Includes   //
 ////////////////*/
+#include <string>
 #include <vector>
 #include "common.hpp"
 #include "platform.hpp"
@@ -184,6 +185,82 @@ public:
 
     /// @summary Disposes of resources associated with the sprite batch.
     virtual void Dispose(void);
+};
+
+/// @summary Measures and renders text using a monospace bitmap font.
+class SpriteFont
+{
+protected:
+    Texture *GlyphTexture;  /// The texture defining the glyph bitmaps.
+    rect_t   SourceRect;    /// The bounding rectangle of the glyph texture.
+    float    CharWidth;     /// The width of a single character, in pixels.
+    float    CharHeight;    /// The height of a single character, in pixels.
+    float    SpacingX;      /// The horizontal spacing between characters.
+    float    SpacingY;      /// The vertical spacing between lines.
+    char     FirstChar;     /// The codepoint of the first glyph in the font.
+    char     LastChar;      /// The codepoint of the last glyph in the font.
+
+public:
+    SpriteFont(void);
+    virtual ~SpriteFont(void);
+
+public:
+    /// @summary Retrieve the texture containing the glyph data.
+    /// @return The texture containing the glyph bitmap data.
+    Texture* GetTexture(void)    const { return GlyphTexture; }
+
+    /// @summary Retrieve the glyph texture rectangle.
+    /// @return The rectangle describing the glyph texture.
+    rect_t   GetSourceRect(void) const { return SourceRect;   }
+
+    /// @summary Retrieve the width of a single character, in pixels.
+    /// @return The character width, in pixels.
+    float    GetCharWidth(void)  const { return CharWidth;    }
+
+    /// @summary Retrieve the height of a single character, in pixels.
+    /// @return The character height, in pixels.
+    float    GetCharHeight(void) const { return CharHeight;   }
+
+    /// @summary Retrieve the horizontal spacing between characters.
+    /// @return The horizontal spacing between characters, in pixels.
+    float    GetSpacingX(void)   const { return SpacingX;     }
+
+    /// @summary Retrieve the vertical spacing between lines.
+    /// @return The vertical spacing between lines, in pixels.
+    float    GetSpacingY(void)   const { return SpacingY;     }
+
+    /// @summary Retrieve the codepoint of the first character in the font.
+    /// @return The codepoint of the first character defined in the font.
+    char     GetFirstChar(void)  const { return FirstChar;    }
+
+    /// @summary Retrieve the codepoint of the last character in the font.
+    /// @return The codepoint of the last character defined in the font.
+    char     GetLastChar(void)   const { return LastChar;     }
+
+public:
+    /// @summary Sets the fonts attributes.
+    /// @param t The texture defining the glyph bitmap data.
+    /// @param chw The width of a single character, in pixels.
+    /// @param chh The height of a single character, in pixels.
+    /// @param sx The horizontal spacing between characters, in pixels.
+    /// @param sy The vertical spacing between characters, in pixels.
+    /// @param first The codepoint of the first character defined in the font.
+    /// @param last The codepoint of the last character defined in the font.
+    void SetSource(Texture *t, float chw, float chh, float sx, float sy, char first, char last);
+
+    /// @summary Measures the dimensions of a string when rendered with the font.
+    /// @param str The string to measure.
+    /// @param bounds On return, this rectangle is updated with the width and
+    /// height of the bounding box of the string when rendered with the font.
+    void Measure(std::string const &str, rect_t *bounds);
+
+    /// @summary Generates sprites for the characters in a string.
+    /// @param str The string for which sprites will be generated.
+    /// @param x The x-coordinate of the upper-left corner of the first character.
+    /// @param y The y-coordinate of the upper-left corner of the first character.
+    /// @param rgba The RGBA tint color for the glyph sprites.
+    /// @param batch The target sprite batch.
+    void Draw(std::string const &str, float x, float y, uint32_t z, float const *rgba, SpriteBatch *batch);
 };
 
 /// @summary
