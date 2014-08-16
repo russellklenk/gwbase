@@ -26,6 +26,11 @@
 #define GW_MAX_TIMESTEP    0.25
 #define GW_SIM_TIMESTEP    1.0 / 120.0
 
+/*///////////////
+//   Globals   //
+///////////////*/
+static DisplayManager *gDisplayManager = NULL;
+
 /*///////////////////////
 //   Local Functions   //
 ///////////////////////*/
@@ -88,69 +93,6 @@ static void simulate(double currentTime, double elapsedTime)
     UNUSED_ARG(elapsedTime);
 }
 
-//// TEST CODE
-
-static Texture *gTEX = NULL;
-static Texture *gFTEX = NULL;
-static SpriteBatch *gBATCH = NULL;
-static SpriteFont *gFONT = NULL;
-
-/*static GLuint            gPROGRAM;
-static shader_desc_t     gSHADER;
-static attribute_desc_t *aPTX = NULL;
-static attribute_desc_t *aCLR = NULL;
-static sampler_desc_t   *sTEX = NULL;
-static uniform_desc_t   *uMSS = NULL;
-
-static sprite_effect_t gEFFECT;
-static sprite_batch_t  gBATCH;*/
-
-static float DEGREES_PER_SEC = 180.0f;
-
-/*static char const *gVSS =
-    "#version 330\n"
-    "uniform mat4 uMSS;\n"
-    "layout (location = 0) in vec4 aPTX;\n"
-    "layout (location = 1) in vec4 aCLR;\n"
-    "out vec4 vCLR;\n"
-    "out vec2 vTEX;\n"
-    "void main() {\n"
-    "    vCLR = aCLR;\n"
-    "    vTEX = vec2(aPTX.z, aPTX.w);\n"
-    "    gl_Position = uMSS * vec4(aPTX.x, aPTX.y, 0, 1);\n"
-    "}\n";
-
-static char const *gFSS =
-    "#version 330\n"
-    "uniform sampler2D sTEX;\n"
-    "in  vec2 vTEX;\n"
-    "in  vec4 vCLR;\n"
-    "out vec4 oCLR;\n"
-    "void main() {\n"
-    "    oCLR = texture(sTEX, vTEX) * vCLR;\n"
-    "}\n";
-
-static void effect_setup(sprite_effect_t *effect, void *context)
-{
-    UNUSED_ARG(context);
-    glUseProgram(gPROGRAM);
-    glEnable(GL_CULL_FACE);
-    glFrontFace(GL_CCW);
-    glDisable(GL_DEPTH_TEST);
-    sprite_effect_bind_buffers(effect);
-    sprite_effect_apply_blendstate(effect);
-    set_uniform(uMSS, effect->Projection, false);
-}
-
-static void effect_apply_state(sprite_effect_t *effect, uint32_t state, void *context)
-{
-    UNUSED_ARG(effect);
-    UNUSED_ARG(context);
-    set_sampler(sTEX, GLuint(state));
-}*/
-
-//// TEST CODE
-
 /// @summary Submits a single frame to the GPU for rendering. Runs once per
 /// application tick at a variable timestep.
 /// @param currentTime The current absolute time, in seconds. This represents
@@ -166,61 +108,16 @@ static void render(double currentTime, double elapsedTime, double t, int width, 
     UNUSED_ARG(elapsedTime);
     UNUSED_ARG(t);
 
-    //// TEST CODE
+    DisplayManager *dm    = gDisplayManager;
+    SpriteBatch    *batch = dm->GetBatch();
+    SpriteFont     *font  = dm->GetFont();
+    float           rgba[]= {1.0f, 0.0f, 0.0f, 1.0f};
 
-    glViewport(0, 0, width, height);
-    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-    rect_t src   = { 0, 0, gTEX->GetWidth(), gTEX->GetHeight() };
-    float rgba[] = { 1.0f, 1.0f, 1.0f, 0.5f };
-
-    gBATCH->SetBlendModeNone();
-    gBATCH->SetViewport(width, height);
-
-    gBATCH->Add(1, gTEX, width * 0.5f, height * 0.5f, src, rgba,
-        rad(currentTime * DEGREES_PER_SEC),
-        gTEX->GetWidth() * 0.5f, gTEX->GetHeight() * 0.5f,
-        1.0f, 1.0f);
-
-    gBATCH->SetBlendModeAlpha();
-    float rgba2[] = { 1.0f, 0.0f, 0.0f, 1.0f };
-    gFONT->Draw("Hello, world!", 0, 0, 1, rgba2, 5.0f, 5.0f, gBATCH);
-
-    gBATCH->Flush();
-
-    /*flush_sprite_batch(&gBATCH);
-
-    sprite_t sprite;
-    sprite.ScreenX       = width  * 0.5f;
-    sprite.ScreenY       = height * 0.5f;
-    sprite.OriginX       = gTEX->GetWidth()  * 0.5f;
-    sprite.OriginY       = gTEX->GetHeight() * 0.5f;
-    sprite.ScaleX        = 1.0f;
-    sprite.ScaleY        = 1.0f;
-    sprite.Orientation   = rad(currentTime * DEGREES_PER_SEC);
-    sprite.TintColor     = 0xFFFFFFFFU;
-    sprite.ImageX        = 0;
-    sprite.ImageY        = 0;
-    sprite.ImageWidth    = gTEX->GetWidth();
-    sprite.ImageHeight   = gTEX->GetHeight();
-    sprite.TextureWidth  = gTEX->GetWidth();
-    sprite.TextureHeight = gTEX->GetHeight();
-    sprite.LayerDepth    = 1;
-    sprite.RenderState   = uint32_t(gTEX->GetId());
-
-    ensure_sprite_batch(&gBATCH, 1);
-    generate_quads(gBATCH.Quads, gBATCH.State, gBATCH.Order, 0, &sprite, 0, 1);
-    gBATCH.Count = 1;
-
-    sprite_effect_set_viewport(&gEFFECT, width, height);
-    sprite_effect_apply_t fxfuncs = {
-        effect_setup,
-        effect_apply_state
-    };
-    sprite_effect_draw_batch_ptc(&gEFFECT, &gBATCH, &fxfuncs, NULL);*/
-
-    //// TEST CODE
+    dm->SetViewport(width, height);
+    dm->Clear(0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0);
+    batch->SetBlendModeAlpha();
+    font->Draw("Hello, world!", 0, 0, 1, rgba, 5.0f, 5.0f, batch);
+    batch->Flush();
 }
 
 /*///////////////////////
@@ -283,57 +180,11 @@ int main(int argc, char **argv)
     }
 #endif
 
+    // initialize global managers:
+    gDisplayManager = new DisplayManager();
+    gDisplayManager->Init(window);
 
-    //// TEST CODE
-
-    gTEX = new Texture();
-    if (gTEX->LoadFromFile("assets/test_bg.tga"))
-    {
-        printf("Texture loaded successfully.\n");
-    }
-    else printf("Texture failed to load.\n");
-
-    gFTEX = new Texture();
-    if (gFTEX->LoadFromFile("assets/font.tga"))
-    {
-        printf("Font texture loaded successfully.\n");
-    }
-    else printf("Font texture failed to load.\n");
-
-    gFONT = new SpriteFont();
-    gFONT->SetSource(gFTEX, 8, 12, 6, 10, ' ', '~');
-
-    gBATCH = new SpriteBatch(1024);
-
-    /*shader_source_t     sources;
-    shader_source_init(&sources);
-    shader_source_add (&sources, GL_VERTEX_SHADER,   (char**) &gVSS, 1);
-    shader_source_add (&sources, GL_FRAGMENT_SHADER, (char**) &gFSS, 1);
-    if (build_shader(&sources, &gSHADER, &gPROGRAM))
-    {
-        printf("Shader Code compiled successfully.\n");
-        aPTX = find_attribute(&gSHADER, "aPTX");
-        aCLR = find_attribute(&gSHADER, "aCLR");
-        sTEX = find_sampler  (&gSHADER, "sTEX");
-        uMSS = find_uniform  (&gSHADER, "uMSS");
-    }
-    else
-    {
-        printf("Shader Code failed to compile.\n");
-    }
-    if (create_sprite_effect(&gEFFECT, 1024, sizeof(sprite_vertex_ptc_t), sizeof(uint16_t)))
-    {
-        sprite_effect_setup_vao_ptc(&gEFFECT);
-        printf("Created sprite effect.\n");
-    }
-    else
-    {
-        printf("Failed to create sprite effect.\n");
-    }
-    create_sprite_batch(&gBATCH, 1);*/
-
-    //// TEST CODE
-
+    // game loop setup and run:
     const double   Step = GW_SIM_TIMESTEP;
     double previousTime = glfwGetTime();
     double currentTime  = previousTime;
@@ -388,19 +239,8 @@ int main(int argc, char **argv)
         glfwPollEvents();
     }
 
-    //// TEST CODE
-
-    /*delete_sprite_batch(&gBATCH);
-    delete_sprite_effect(&gEFFECT);
-    shader_desc_free(&gSHADER);
-    glDeleteProgram(gPROGRAM);*/
-
-    delete gBATCH;
-    delete gFONT;
-    delete gFTEX;
-    delete gTEX;
-
-    //// TEST CODE
+    // teardown global managers.
+    delete gDisplayManager;
 
     // perform any top-level cleanup.
     glfwTerminate();

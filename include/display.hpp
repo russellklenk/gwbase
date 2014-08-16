@@ -20,12 +20,13 @@
 /*////////////////
 //  Data Types  //
 ////////////////*/
+/// @summary Defines a simple rectangle using X, Y, width and height.
 struct rect_t
 {
-    float X;
-    float Y;
-    float Width;
-    float Height;
+    float X;        /// The x-coordinate of the upper-left corner of the rectangle.
+    float Y;        /// The y-coordinate of the upper-left corner of the rectangle.
+    float Width;    /// The width of the rectangle.
+    float Height;   /// The height of the rectangle.
 };
 
 /// @summary Wraps an OpenGL texture object and provides an interface for
@@ -266,19 +267,47 @@ public:
     void Draw(std::string const &str, float x, float y, uint32_t z, float const *rgba, float sx, float sy, SpriteBatch *batch);
 };
 
-/// @summary
+/// @summary Manages global display resources.
 class DisplayManager
 {
-public:
-    GLFWwindow *main_window;
+private:
+    GLFWwindow  *MainWindow;
+    SpriteBatch *DefaultBatch;
+    SpriteFont  *DefaultFont;
+    Texture     *FontTexture;
 
 public:
     DisplayManager(void);
     ~DisplayManager(void);
 
 public:
-    bool init(GLFWwindow *win);
-    void shutdown(void);
+    GLFWwindow*  GetWindow(void)      const { return MainWindow;   }
+    SpriteBatch* GetBatch(void)       const { return DefaultBatch; }
+    SpriteFont*  GetFont(void)        const { return DefaultFont;  }
+    Texture*     GetFontTexture(void) const { return FontTexture;  }
+
+public:
+    /// @summary Performs one-time initialization of display resources.
+    /// @param win The main window used for rendering.
+    /// @return true if display resources are initialized successfully.
+    bool Init(GLFWwindow *win);
+
+    /// @summary Clears the framebuffer to the specified values.
+    /// @param r The red channel clear color, in [0, 1].
+    /// @param g The green channel clear color, in [0, 1].
+    /// @param b The blue channel clear color, in [0, 1].
+    /// @param a The alpha channel clear color, in [0, 1].
+    /// @param z The depth clear value, in [0, 1].
+    /// @param s The stencil clear value, in [0, 255].
+    void Clear(float r, float g, float b, float a, float z, uint8_t s);
+
+    /// @summary Sets the current viewport attributes.
+    /// @param width The viewport width, in pixels.
+    /// @param height The viewport height, in pixels.
+    void SetViewport(int width, int height);
+
+    /// @summary Releases display resources.
+    void Shutdown(void);
 
 private:
     DisplayManager(DisplayManager const &other);

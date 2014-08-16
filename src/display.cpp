@@ -457,28 +457,68 @@ void SpriteFont::Draw(std::string const &str, float x, float y, uint32_t z, floa
 
 DisplayManager::DisplayManager(void)
     :
-    main_window(NULL)
+    MainWindow(NULL),
+    DefaultBatch(NULL),
+    DefaultFont(NULL),
+    FontTexture(NULL)
 {
     /* empty */
 }
 
 DisplayManager::~DisplayManager(void)
 {
-    main_window = NULL;
+    Shutdown();
 }
 
 
-bool DisplayManager::init(GLFWwindow *win)
+bool DisplayManager::Init(GLFWwindow *win)
 {
     if (win != NULL)
     {
-        main_window = win;
+        MainWindow   = win;
+        DefaultBatch = new SpriteBatch(16383);
+        DefaultFont  = new SpriteFont();
+        FontTexture  = new Texture();
+        if (FontTexture->LoadFromFile("assets/font.tga") == false)
+        {
+            fprintf(stderr, "ERROR: Could not load assets/font.tga.\n");
+            return false;
+        }
+        else DefaultFont->SetSource(FontTexture, 8, 12, 6, 10, ' ', '~');
         return true;
     }
     else return false;
 }
 
-void DisplayManager::shutdown(void)
+void DisplayManager::Clear(float r, float g, float b, float a, float z, uint8_t s)
 {
-    main_window = NULL;
+    glClearColor(r, g, b, a);
+    glClearDepth(z);
+    glClearStencil(s);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+}
+
+void DisplayManager::SetViewport(int width, int height)
+{
+    glViewport(0, 0, width, height);
+    DefaultBatch->SetViewport(width, height);
+}
+
+void DisplayManager::Shutdown(void)
+{
+    if (DefaultBatch)
+    {
+        delete DefaultBatch;
+        DefaultBatch = NULL;
+    }
+    if (DefaultFont)
+    {
+        delete DefaultFont;
+        DefaultFont = NULL;
+    }
+    if (FontTexture)
+    {
+        delete FontTexture;
+        FontTexture = NULL;
+    }
 }
