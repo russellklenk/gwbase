@@ -461,7 +461,15 @@ DisplayManager::DisplayManager(void)
     DefaultBatch(NULL),
     DefaultFont(NULL),
     FontTexture(NULL),
-    PlayerTexture(NULL)
+    PlayerTexture(NULL),
+    BlackHoleTexture(NULL),
+    BulletTexture(NULL),
+    GlowTexture(NULL),
+    LaserTexture(NULL),
+    PixelTexture(NULL),
+    PointerTexture(NULL),
+    SeekerTexture(NULL),
+    WandererTexture(NULL)
 {
     /* empty */
 }
@@ -476,11 +484,19 @@ bool DisplayManager::Init(GLFWwindow *win)
 {
     if (win != NULL)
     {
-        MainWindow     = win;
-        DefaultBatch   = new SpriteBatch(16383);
-        DefaultFont    = new SpriteFont();
-        FontTexture    = new Texture();
-        PlayerTexture  = new Texture();
+        MainWindow       = win;
+        DefaultBatch     = new SpriteBatch(16383);
+        DefaultFont      = new SpriteFont();
+        FontTexture      = new Texture();
+        PlayerTexture    = new Texture();
+        BlackHoleTexture = new Texture();
+        BulletTexture    = new Texture();
+        GlowTexture      = new Texture();
+        LaserTexture     = new Texture();
+        PixelTexture     = new Texture();
+        PointerTexture   = new Texture();
+        SeekerTexture    = new Texture();
+        WandererTexture  = new Texture();
 
         if (FontTexture->LoadFromFile("assets/font.tga") == false)
         {
@@ -492,6 +508,55 @@ bool DisplayManager::Init(GLFWwindow *win)
         if (PlayerTexture->LoadFromFile("assets/player.tga") == false)
         {
             fprintf(stderr, "ERROR: Could not load assets/player.tga.\n");
+            return false;
+        }
+
+        if (BlackHoleTexture->LoadFromFile("assets/blackhole.tga") == false)
+        {
+            fprintf(stderr, "ERROR: Could not load assets/blackhole.tga.\n");
+            return false;
+        }
+
+        if (BulletTexture->LoadFromFile("assets/bullet.tga") == false)
+        {
+            fprintf(stderr, "ERROR: Could not load assets/bullet.tga.\n");
+            return false;
+        }
+
+        if (GlowTexture->LoadFromFile("assets/glow.tga") == false)
+        {
+            fprintf(stderr, "ERROR: Could not load assets/glow.tga.\n");
+            return false;
+        }
+
+        if (LaserTexture->LoadFromFile("assets/laser.tga") == false)
+        {
+            fprintf(stderr, "ERROR: Could not load assets/laser.tga.\n");
+            return false;
+        }
+
+        /*if (PixelTexture->LoadFromFile("assets/pixel.tga") == false)
+        {
+            fprintf(stderr, "ERROR: Could not load assets/pixel.tga.\n");
+            return false;
+        }*/
+        fprintf(stderr, "WARNING: You need to figure out why assets/pixel.tga doesn't load.\n");
+
+        if (PointerTexture->LoadFromFile("assets/pointer.tga") == false)
+        {
+            fprintf(stderr, "ERROR: Could not load assets/pointer.tga.\n");
+            return false;
+        }
+
+        if (SeekerTexture->LoadFromFile("assets/seeker.tga") == false)
+        {
+            fprintf(stderr, "ERROR: Could not load assets/seeker.tga.\n");
+            return false;
+        }
+
+        if (WandererTexture->LoadFromFile("assets/wanderer.tga") == false)
+        {
+            fprintf(stderr, "ERROR: Could not load assets/wanderer.tga.\n");
             return false;
         }
         return true;
@@ -544,5 +609,45 @@ void DisplayManager::Shutdown(void)
     {
         delete PlayerTexture;
         PlayerTexture = NULL;
+    }
+    if (BlackHoleTexture)
+    {
+        delete BlackHoleTexture;
+        BlackHoleTexture = NULL;
+    }
+    if (BulletTexture)
+    {
+        delete BulletTexture;
+        BulletTexture = NULL;
+    }
+    if (GlowTexture)
+    {
+        delete GlowTexture;
+        GlowTexture = NULL;
+    }
+    if (LaserTexture)
+    {
+        delete LaserTexture;
+        LaserTexture = NULL;
+    }
+    if (PixelTexture)
+    {
+        delete PixelTexture;
+        PixelTexture = NULL;
+    }
+    if (PointerTexture)
+    {
+        delete PointerTexture;
+        PointerTexture = NULL;
+    }
+    if (SeekerTexture)
+    {
+        delete SeekerTexture;
+        SeekerTexture = NULL;
+    }
+    if (WandererTexture)
+    {
+        delete WandererTexture;
+        WandererTexture = NULL;
     }
 }

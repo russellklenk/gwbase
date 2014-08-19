@@ -276,17 +276,33 @@ private:
     SpriteFont  *DefaultFont;
     Texture     *FontTexture;
     Texture     *PlayerTexture;
+    Texture     *BlackHoleTexture;
+    Texture     *BulletTexture;
+    Texture     *GlowTexture;
+    Texture     *LaserTexture;
+    Texture     *PixelTexture;
+    Texture     *PointerTexture;
+    Texture     *SeekerTexture;
+    Texture     *WandererTexture;
 
 public:
     DisplayManager(void);
     ~DisplayManager(void);
 
 public:
-    GLFWwindow*  GetWindow(void)        const { return MainWindow;    }
-    SpriteBatch* GetBatch(void)         const { return DefaultBatch;  }
-    SpriteFont*  GetFont(void)          const { return DefaultFont;   }
-    Texture*     GetFontTexture(void)   const { return FontTexture;   }
+    GLFWwindow*  GetWindow(void) const { return MainWindow;    }
+    SpriteBatch* GetBatch(void) const { return DefaultBatch;  }
+    SpriteFont*  GetFont(void) const { return DefaultFont;   }
+    Texture*     GetFontTexture(void) const { return FontTexture;   }
     Texture*     GetPlayerTexture(void) const { return PlayerTexture; }
+    Texture*     GetBlackHoleTexture(void) const { return BlackHoleTexture; }
+    Texture*     GetBulletTexture(void) const { return BulletTexture; }
+    Texture*     GetGlowTexture(void) const { return GlowTexture; }
+    Texture*     GetLaserTexture(void) const { return LaserTexture; }
+    Texture*     GetPixelTexture(void) const { return PixelTexture; }
+    Texture*     GetPointerTexture(void) const { return PointerTexture; }
+    Texture*     GetSeekerTexture(void) const { return SeekerTexture; }
+    Texture*     GetWandererTexture(void) const { return WandererTexture; }
 
 public:
     /// @summary Performs one-time initialization of display resources.
