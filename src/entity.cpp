@@ -21,13 +21,11 @@
 //  Public Functions   //
 ///////////////////////*/
 Entity::Entity(void) :
-    x(0), y(0),
-    scale_x(1.0f),
-    scale_y(1.0f),
-    orientation(0.0f),
-    is_visible(false),
-    is_collidable(false),
-    is_active(false)
+    Image(NULL),
+    Orientation(0.0f),
+    Radius(0.0f),
+    IsExpired(false),
+    Kind(ENTITY_DONT_CARE)
 {
     /* empty */
 }
@@ -37,22 +35,18 @@ Entity::~Entity(void)
     /* empty */
 }
 
-void Entity::input(double currentTime, double elapsedTime, InputManager *im)
+void Entity::draw(double currentTime, double elapsedTime, DisplayManager *dm)
 {
     UNUSED_ARG(currentTime);
     UNUSED_ARG(elapsedTime);
-    UNUSED_ARG(im);
-}
-
-void Entity::update(double currentTime, double elapsedTime)
-{
-    UNUSED_ARG(currentTime);
-    UNUSED_ARG(elapsedTime);
-}
-
-void Entity::render(double currentTime, double elapsedTime, DisplayManager *dm)
-{
-    UNUSED_ARG(currentTime);
-    UNUSED_ARG(elapsedTime);
-    UNUSED_ARG(dm);
+    float  width   = (float) Image->GetWidth();
+    float  height  = (float) Image->GetHeight();
+    rect_t src     = { 0, 0, width, height };
+    float  posx    = Position[0];
+    float  posy    = Position[1];
+    float  originx = width  * 0.5f;
+    float  originy = height * 0.5f;
+    float  scalex  = 1.0f;
+    float  scaley  = 1.0f;
+    dm->GetBatch()->Add(1, Image, posx, posy, src, Color, Orientation, originx, originy, scalex, scaley);
 }

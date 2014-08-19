@@ -10,52 +10,59 @@
 //   Includes   //
 ////////////////*/
 #include "common.hpp"
+#include "display.hpp"
 
 /*////////////////
 //  Data Types  //
 ////////////////*/
-/// Forward declare the input manager used for reading input events.
-class InputManager;
-
-/// Forward declare the display manager used for rendering.
-class DisplayManager;
+/// @summary Define the various types of entities.
+enum EntityType
+{
+    ENTITY_DONT_CARE = 0,
+    ENTITY_BULLET    = 1,
+    ENTITY_ENEMY     = 2,
+    ENTITY_BLACKHOLE = 3
+};
 
 /// @summary The base class for all game entities.
 class Entity
 {
-public:
-    float x;
-    float y;
-    float scale_x;
-    float scale_y;
-    float orientation;
-    bool  is_visible;
-    bool  is_collidable;
-    bool  is_active;
-
 protected:
-    Entity(void);
+    Texture   *Image;       /// The texture used to render the entity.
+    float      Color[4];    /// The RGBA tint color used to modify the entity.
+    float      Position[2]; /// The entity position [0] = X, [1] = Y.
+    float      Velocity[2]; /// The entity velocity [0] = X, [1] = Y.
+    float      Orientation; /// The entity angle of orientation, in radians.
+    float      Radius;      /// The entity radius, used for collision detection.
+    bool       IsExpired;   /// true if this entity has 'died'.
+    EntityType Kind;        /// The type of entity.
 
 public:
+    Entity(void);
     virtual ~Entity(void);
 
 public:
-    /// @summary Processes user input during a single tick.
-    /// @param currentTime The current game time, in seconds.
-    /// @param elapsedTime The time elapsed since the previous frame, in seconds.
-    /// @param im The input manager used to read user input events.
-    virtual void input(double currentTime, double elapsedTime, InputManager *im);
+    EntityType GetKind(void) const { return Kind; }
+    float GetWidth(void) const { return (float) Image->GetWidth(); }
+    float GetHeight(void) const { return (float) Image->GetHeight(); }
+    float const* GetPosition(void) const { return Position; }
+    float const* GetVelocity(void) const { return Velocity; }
+    float GetRadius(void) const { return Radius; }
+    bool GetExpired(void) const { return IsExpired; }
+    void SetVelocity(float x, float y) { Velocity[0] = x; Velocity[1] = y; }
+    void SetExpired(void) { IsExpired = true; }
 
+public:
     /// @summary Executes a single simulation tick for the entity.
     /// @param currentTime The current simulation time, in seconds.
     /// @param elapsedTime The time elapsed since the last simulation tick.
-    virtual void update(double currentTime, double elapsedTime);
+    virtual void update(double currentTime, double elapsedTime) = 0;
 
     /// @summary Sets state and submits geometry used for rendering.
     /// @param currentTime The current game time, in seconds.
     /// @param elapsedTime The time elapsed since the previous frame, in seconds.
     /// @param dm The display manager used to submit rendering commands.
-    virtual void render(double currentTime, double elapsedTime, DisplayManager *dm);
+    virtual void draw(double currentTime, double elapsedTime, DisplayManager *dm);
 };
 
 #endif /* !defined(GW_ENTITY_HPP) */
