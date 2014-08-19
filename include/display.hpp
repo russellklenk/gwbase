@@ -13,9 +13,9 @@
 #include <vector>
 #include "common.hpp"
 #include "platform.hpp"
-#include "glshader.hpp" /// low-level shader interface
-#include "glsprite.hpp" /// low-level sprite rendering
-#include "glimage.hpp"  /// low-level pixel transfers
+#include "ll_shader.hpp"
+#include "ll_sprite.hpp"
+#include "ll_image.hpp"
 
 /*////////////////
 //  Data Types  //

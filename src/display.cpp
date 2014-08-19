@@ -9,10 +9,10 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "display.hpp"
-#include "glimage.hpp"
-#include "imtga.hpp"
 #include "math.hpp"
+#include "ff_tga.hpp"
+#include "display.hpp"
+#include "ll_image.hpp"
 
 /*/////////////////
 //   Constants   //

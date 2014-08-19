@@ -11,10 +11,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "display.hpp"
-#include "glsprite.hpp"
-#include "glshader.hpp"
 #include "math.hpp"
+#include "input.hpp"
+#include "display.hpp"
+#include "ll_sprite.hpp"
+#include "ll_shader.hpp"
 
 /*/////////////////
 //   Constants   //
@@ -30,6 +31,7 @@
 //   Globals   //
 ///////////////*/
 static DisplayManager *gDisplayManager = NULL;
+static InputManager   *gInputManager   = NULL;
 
 /*///////////////////////
 //   Local Functions   //
@@ -78,8 +80,7 @@ static void gl_arb_debug(
 /// @param elapsedTime The time elapsed since the previous tick, in seconds.
 static void input(double currentTime, double elapsedTime)
 {
-    UNUSED_ARG(currentTime);
-    UNUSED_ARG(elapsedTime);
+    gInputManager->Update(currentTime, elapsedTime);
 }
 
 /// @summary Executes a single game simulation tick to move all game entities.
@@ -184,6 +185,8 @@ int main(int argc, char **argv)
     // initialize global managers:
     gDisplayManager = new DisplayManager();
     gDisplayManager->Init(window);
+    gInputManager = new InputManager();
+    gInputManager->Init(window);
 
     // game loop setup and run:
     const double   Step = GW_SIM_TIMESTEP;

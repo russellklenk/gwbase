@@ -10,6 +10,8 @@ This project depends on the latest GLFW3, available from http://www.glfw.org, an
 
 GLFW 3.0.4 and GLEW 1.10.0 compiled for OSX are included in this project.
 
+OpenAL is required for audio playback. This is included on OSX, but requires a separate install on Windows.
+
 This game has been tested on a MacBook Pro Retina 2.7GHz Core i7 with 16GB RAM and an NVIDIA GeForce 650M running OSX 10.9.4. OpenGL 4 support is required.
 
 # License #
