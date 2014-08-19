@@ -275,16 +275,18 @@ private:
     SpriteBatch *DefaultBatch;
     SpriteFont  *DefaultFont;
     Texture     *FontTexture;
+    Texture     *PlayerTexture;
 
 public:
     DisplayManager(void);
     ~DisplayManager(void);
 
 public:
-    GLFWwindow*  GetWindow(void)      const { return MainWindow;   }
-    SpriteBatch* GetBatch(void)       const { return DefaultBatch; }
-    SpriteFont*  GetFont(void)        const { return DefaultFont;  }
-    Texture*     GetFontTexture(void) const { return FontTexture;  }
+    GLFWwindow*  GetWindow(void)        const { return MainWindow;    }
+    SpriteBatch* GetBatch(void)         const { return DefaultBatch;  }
+    SpriteFont*  GetFont(void)          const { return DefaultFont;   }
+    Texture*     GetFontTexture(void)   const { return FontTexture;   }
+    Texture*     GetPlayerTexture(void) const { return PlayerTexture; }
 
 public:
     /// @summary Performs one-time initialization of display resources.

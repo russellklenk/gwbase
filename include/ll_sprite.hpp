@@ -5,8 +5,8 @@
 /// @author Russell Klenk (contact@russellklenk.com)
 ///////////////////////////////////////////////////////////////////////////80*/
 
-#ifndef GL_SPRITE_HPP
-#define GL_SPRITE_HPP
+#ifndef LL_SPRITE_HPP
+#define LL_SPRITE_HPP
 
 /*////////////////
 //   Includes   //
@@ -407,4 +407,4 @@ void sprite_effect_draw_batch_region_ptc(
     sprite_effect_apply_t const *fxfuncs,
     void                        *context);
 
-#endif /* !defined(GL_SPRITE_HPP) */
+#endif /* !defined(LL_SPRITE_HPP) */

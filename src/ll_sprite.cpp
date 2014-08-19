@@ -11,7 +11,8 @@
 #include <math.h>
 #include <stdlib.h>
 #include <assert.h>
-#include "glsprite.hpp"
+
+#include "ll_sprite.hpp"
 
 /*/////////////////
 //   Constants   //

@@ -7,8 +7,8 @@
 /// @author Russell Klenk (contact@russellklenk.com)
 ///////////////////////////////////////////////////////////////////////////80*/
 
-#ifndef GL_SHADER_HPP
-#define GL_SHADER_HPP
+#ifndef LL_SHADER_HPP
+#define LL_SHADER_HPP
 
 /*////////////////
 //   Includes   //
@@ -335,4 +335,4 @@ static inline uniform_desc_t* find_uniform(shader_desc_t *shader, char const *na
     return gl_shader_kv_find(name, shader->UniformNames, shader->Uniforms, shader->UniformCount);
 }
 
-#endif /* !defined(GL_SHADER_HPP) */
+#endif /* !defined(LL_SHADER_HPP) */

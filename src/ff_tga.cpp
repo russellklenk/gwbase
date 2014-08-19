@@ -8,7 +8,7 @@
 //   Includes   //
 ////////////////*/
 #include <stdlib.h>
-#include "imtga.hpp"
+#include "ff_tga.hpp"
 
 /*//////////////////////
 //   Implementation   //

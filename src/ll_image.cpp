@@ -8,7 +8,7 @@
 /*////////////////
 //   Includes   //
 ////////////////*/
-#include "glimage.hpp"
+#include "ll_image.hpp"
 
 static inline size_t align_up(size_t size, size_t pow2)
 {

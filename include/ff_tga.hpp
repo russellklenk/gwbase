@@ -4,8 +4,8 @@
 /// @author Russell Klenk (contact@russellklenk.com)
 ///////////////////////////////////////////////////////////////////////////80*/
 
-#ifndef IM_TGA_HPP
-#define IM_TGA_HPP
+#ifndef FF_TGA_HPP
+#define FF_TGA_HPP
 
 /*////////////////
 //   Includes   //
@@ -106,4 +106,4 @@ bool tga_describe(
 /// @return true if the TGA is a supported format.
 bool tga_pixels(void *rgba32, void const *data, size_t data_size);
 
-#endif /* !defined(IM_TGA_HPP) */
+#endif /* !defined(FF_TGA_HPP) */

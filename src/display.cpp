@@ -460,7 +460,8 @@ DisplayManager::DisplayManager(void)
     MainWindow(NULL),
     DefaultBatch(NULL),
     DefaultFont(NULL),
-    FontTexture(NULL)
+    FontTexture(NULL),
+    PlayerTexture(NULL)
 {
     /* empty */
 }
@@ -475,16 +476,24 @@ bool DisplayManager::Init(GLFWwindow *win)
 {
     if (win != NULL)
     {
-        MainWindow   = win;
-        DefaultBatch = new SpriteBatch(16383);
-        DefaultFont  = new SpriteFont();
-        FontTexture  = new Texture();
+        MainWindow     = win;
+        DefaultBatch   = new SpriteBatch(16383);
+        DefaultFont    = new SpriteFont();
+        FontTexture    = new Texture();
+        PlayerTexture  = new Texture();
+
         if (FontTexture->LoadFromFile("assets/font.tga") == false)
         {
             fprintf(stderr, "ERROR: Could not load assets/font.tga.\n");
             return false;
         }
         else DefaultFont->SetSource(FontTexture, 8, 12, 6, 10, ' ', '~');
+
+        if (PlayerTexture->LoadFromFile("assets/player.tga") == false)
+        {
+            fprintf(stderr, "ERROR: Could not load assets/player.tga.\n");
+            return false;
+        }
         return true;
     }
     else return false;
@@ -530,5 +539,10 @@ void DisplayManager::Shutdown(void)
     {
         delete FontTexture;
         FontTexture = NULL;
+    }
+    if (PlayerTexture)
+    {
+        delete PlayerTexture;
+        PlayerTexture = NULL;
     }
 }

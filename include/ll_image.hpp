@@ -5,8 +5,8 @@
 /// @author Russell Klenk (contact@russellklenk.com)
 ///////////////////////////////////////////////////////////////////////////80*/
 
-#ifndef GL_IMAGE_HPP
-#define GL_IMAGE_HPP
+#ifndef LL_IMAGE_HPP
+#define LL_IMAGE_HPP
 
 /*////////////////
 //   Includes   //
@@ -272,4 +272,4 @@ void transfer_pixels_d2h(pixel_transfer_d2h_t *transfer);
 /// @param transfer An object describing the transfer operation to execute.
 void transfer_pixels_h2d(pixel_transfer_h2d_t *transfer);
 
-#endif /* !defined(GL_IMAGE_HPP) */
+#endif /* !defined(LL_IMAGE_HPP) */

@@ -49,4 +49,13 @@
 // GLFW should be included after the system OpenGL headers.
 #include "GLFW/glfw3.h"
 
+// pull in platform OpenAL headers for sound support.
+#if defined(__APPLE__)
+    #include <OpenAL/al.h>
+    #include <OpenAL/alc.h>
+#else
+    #include <AL/al.h>
+    #include <AL/alc.h>
+#endif
+
 #endif /* !defined(GW_PLATFORM_HPP) */

@@ -13,11 +13,11 @@
 #ifdef  _MSC_VER
 #include <intrin.h>
 #endif
-
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
-#include "glshader.hpp"
+
+#include "ll_shader.hpp"
 
 static inline uint32_t rotl32(uint32_t x, int8_t r)
 {
