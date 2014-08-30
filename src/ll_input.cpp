@@ -40,8 +40,20 @@ static input_context_t* alloc_context(GLFWwindow *win)
     if (gContextCount == MAX_INPUT_CONTEXTS)
         return NULL;
 
+    // to support HiDPI devices, we need to be able to calculate
+    // the scale factor from window client space to pixels.
+    int win_w  = 0;
+    int win_h  = 0;
+    int buf_w  = 0;
+    int buf_h  = 0;
+    glfwGetWindowSize(win, &win_w, &win_h);
+    glfwGetFramebufferSize(win, &buf_w, &buf_h);
+
+    // initialize the input context to its default state.
     input_context_t *ctx = &gContextList[gContextCount];
     ctx->Window            = win;
+    ctx->ScaleX            = float(buf_w) / float(win_w);
+    ctx->ScaleY            = float(buf_h) / float(win_h);
     ctx->MouseX            = 0;
     ctx->MouseY            = 0;
     ctx->MouseState        = 0;
@@ -103,8 +115,8 @@ static void glfw_cursor(GLFWwindow *win, double x, double y)
     input_context_t *ctx = find_context(win);
     if (ctx)
     {
-        ctx->MouseX = float(x);
-        ctx->MouseY = float(y);
+        ctx->MouseX = float(x) * ctx->ScaleX;
+        ctx->MouseY = float(y) * ctx->ScaleY;
     }
 }
 
@@ -199,6 +211,8 @@ void input_snapshot(input_snapshot_t *dst, GLFWwindow *win)
     {
         // copy event-driven attributes from the context.
         dst->Window            = ctx->Window;
+        dst->ScaleX            = ctx->ScaleX;
+        dst->ScaleY            = ctx->ScaleY;
         dst->MouseX            = ctx->MouseX;
         dst->MouseY            = ctx->MouseY;
         dst->MouseState        = ctx->MouseState;

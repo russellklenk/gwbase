@@ -40,6 +40,8 @@
 struct input_context_t
 {
     GLFWwindow *Window;
+    float       ScaleX;
+    float       ScaleY;
     float       MouseX;
     float       MouseY;
     uint32_t    MouseState;
@@ -52,6 +54,8 @@ struct input_context_t
 struct input_snapshot_t
 {
     GLFWwindow *Window;
+    float       ScaleX;
+    float       ScaleY;
     float       MouseX;
     float       MouseY;
     uint32_t    MouseState;

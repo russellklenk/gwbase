@@ -57,6 +57,7 @@ bool InputManager::Init(GLFWwindow *win)
         DisconnectEvents = 0;
         memset(&CurrentState,  0, sizeof(input_snapshot_t));
         memset(&PreviousState, 0, sizeof(input_snapshot_t));
+        input_attach(win);
         return true;
     }
     else return false;
@@ -64,7 +65,7 @@ bool InputManager::Init(GLFWwindow *win)
 
 void InputManager::Shutdown(void)
 {
-    /* empty */
+    input_detach(MainWindow);
 }
 
 bool InputManager::IsKeyUp(int key) const
