@@ -458,6 +458,8 @@ void SpriteFont::Draw(std::string const &str, float x, float y, uint32_t z, floa
 DisplayManager::DisplayManager(void)
     :
     MainWindow(NULL),
+    ViewportWidth(0.0f),
+    ViewportHeight(0.0f),
     DefaultBatch(NULL),
     DefaultFont(NULL),
     FontTexture(NULL),
@@ -497,6 +499,12 @@ bool DisplayManager::Init(GLFWwindow *win)
         PointerTexture   = new Texture();
         SeekerTexture    = new Texture();
         WandererTexture  = new Texture();
+
+        int width  = 0;
+        int height = 0;
+        glfwGetFramebufferSize(win, &width, &height);
+        ViewportWidth  = float(width);
+        ViewportHeight = float(height);
 
         if (FontTexture->LoadFromFile("assets/font.tga") == false)
         {
@@ -579,6 +587,8 @@ void DisplayManager::BeginFrame(void)
 
 void DisplayManager::SetViewport(int width, int height)
 {
+    ViewportWidth  = float(width);
+    ViewportHeight = float(height);
     glViewport(0, 0, width, height);
     DefaultBatch->SetViewport(width, height);
 }

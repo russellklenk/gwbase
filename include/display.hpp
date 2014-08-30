@@ -272,6 +272,8 @@ class DisplayManager
 {
 private:
     GLFWwindow  *MainWindow;
+    float        ViewportWidth;
+    float        ViewportHeight;
     SpriteBatch *DefaultBatch;
     SpriteFont  *DefaultFont;
     Texture     *FontTexture;
@@ -303,6 +305,8 @@ public:
     Texture*     GetPointerTexture(void) const { return PointerTexture; }
     Texture*     GetSeekerTexture(void) const { return SeekerTexture; }
     Texture*     GetWandererTexture(void) const { return WandererTexture; }
+    float        GetViewportWidth(void) const { return ViewportWidth; }
+    float        GetViewportHeight(void) const { return ViewportHeight; }
 
 public:
     /// @summary Performs one-time initialization of display resources.
