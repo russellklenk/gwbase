@@ -53,7 +53,6 @@ void Player::Kill(void)
 
 void Player::Init(DisplayManager *dm)
 {
-    disp            = dm;
     Image           = dm->GetPlayerTexture();
     Radius          = max2(Image->GetWidth(), Image->GetHeight());
     ShipSpeed       = SHIP_SPEED;

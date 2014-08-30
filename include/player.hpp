@@ -19,7 +19,6 @@
 class Player : public Entity
 {
 protected:
-    DisplayManager *disp;
     float TargetPoint[2];
     float TargetVector[2];
     float CooldownRemaining;
