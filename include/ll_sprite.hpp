@@ -68,7 +68,7 @@ struct sprite_t
 /// @summary A structure storing the data required to represent a sprite within
 /// the sprite batch. Sprites are transformed to quads when they are pushed to
 /// the sprite batch. Each quad definition is 64 bytes.
-struct quad_t
+struct squad_t
 {
     float    Source[4];         /// The XYWH rectangle on the source texture.
     float    Target[4];         /// The XYWH rectangle on the screen.
@@ -91,7 +91,7 @@ struct sprite_batch_t
 {
     size_t    Count;            /// The number of buffered sprites.
     size_t    Capacity;         /// The capacity of the various buffers.
-    quad_t   *Quads;            /// Buffer for transformed quad data.
+    squad_t  *Quads;            /// Buffer for transformed quad data.
     qsdata_t *State;            /// Render state identifiers for each quad.
     uint32_t *Order;            /// Insertion order values for each quad.
 };
@@ -268,7 +268,7 @@ inline void sort_sprite_batch(sprite_batch_t *batch)
 /// @param sprite_offset The zero-based index of the first sprite to read.
 /// @param count The number of sprite definitions to read.
 void generate_quads(
-    quad_t         *quads,
+    squad_t        *quads,
     qsdata_t       *sdata,
     uint32_t       *indices,
     size_t          quad_offset,
@@ -286,7 +286,7 @@ void generate_quads(
 void generate_quad_vertices_ptc(
     void           *buffer,
     size_t          buffer_offset,
-    quad_t const   *quads,
+    squad_t const  *quads,
     uint32_t const *indices,
     size_t          quad_offset,
     size_t          quad_count);
@@ -373,7 +373,7 @@ void sprite_effect_setup_vao_ptc(sprite_effect_t *effect);
 /// @return The number of quads actually buffered. May be less than @a count.
 size_t sprite_effect_buffer_data_ptc(
     sprite_effect_t *effect,
-    quad_t const    *quads,
+    squad_t const   *quads,
     uint32_t const  *indices,
     size_t           quad_offset,
     size_t           quad_count,

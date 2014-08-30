@@ -33,7 +33,7 @@ void create_sprite_batch(sprite_batch_t *batch, size_t capacity)
         batch->Capacity = capacity;
         if (capacity)
         {
-            batch->Quads = (quad_t  *) malloc(capacity * sizeof(quad_t));
+            batch->Quads = (squad_t *) malloc(capacity * sizeof(squad_t));
             batch->State = (qsdata_t*) malloc(capacity * sizeof(qsdata_t));
             batch->Order = (uint32_t*) malloc(capacity * sizeof(uint32_t));
         }
@@ -70,7 +70,7 @@ void ensure_sprite_batch(sprite_batch_t *batch, size_t capacity)
     if (batch->Capacity < capacity)
     {
         batch->Capacity = capacity;
-        batch->Quads    = (quad_t  *) realloc(batch->Quads, capacity * sizeof(quad_t));
+        batch->Quads    = (squad_t *) realloc(batch->Quads, capacity * sizeof(squad_t));
         batch->State    = (qsdata_t*) realloc(batch->State, capacity * sizeof(qsdata_t));
         batch->Order    = (uint32_t*) realloc(batch->Order, capacity * sizeof(uint32_t));
     }
@@ -81,7 +81,7 @@ void flush_sprite_batch(sprite_batch_t *batch)
     batch->Count = 0;
 }
 
-void generate_quads(quad_t *quads, qsdata_t *sdata, uint32_t *indices, size_t quad_offset, sprite_t const *sprites, size_t sprite_offset, size_t sprite_count)
+void generate_quads(squad_t *quads, qsdata_t *sdata, uint32_t *indices, size_t quad_offset, sprite_t const *sprites, size_t sprite_offset, size_t sprite_count)
 {
     size_t qindex = quad_offset;
     size_t sindex = sprite_offset;
@@ -89,7 +89,7 @@ void generate_quads(quad_t *quads, qsdata_t *sdata, uint32_t *indices, size_t qu
     {
         sprite_t const &s = sprites[sindex];
         qsdata_t       &r = sdata[qindex];
-        quad_t         &q = quads[qindex];
+        squad_t        &q = quads[qindex];
 
         q.Source[0]   = s.ImageX;
         q.Source[1]   = s.ImageY;
@@ -116,7 +116,7 @@ void generate_quads(quad_t *quads, qsdata_t *sdata, uint32_t *indices, size_t qu
 void generate_quad_vertices_ptc(
     void           *buffer,
     size_t          buffer_offset,
-    quad_t const   *quads,
+    squad_t const  *quads,
     uint32_t const *indices,
     size_t          quad_offset,
     size_t          quad_count)
@@ -134,7 +134,7 @@ void generate_quad_vertices_ptc(
     {
         // figure out which quad we're working with.
         const uint32_t  id    = indices[quad_offset + i];
-        quad_t const   &quad  = quads[id];
+        squad_t const  &quad  = quads[id];
 
         // pre-calculate values constant across the quad.
         const float     src_x = quad.Source[X];
@@ -369,7 +369,7 @@ void sprite_effect_setup_vao_ptc(sprite_effect_t *effect)
 
 size_t sprite_effect_buffer_data_ptc(
     sprite_effect_t *effect,
-    quad_t const    *quads,
+    squad_t const   *quads,
     uint32_t const  *indices,
     size_t           quad_offset,
     size_t           quad_count,
