@@ -11,6 +11,7 @@
 ////////////////*/
 #include "common.hpp"
 #include "display.hpp"
+#include "input.hpp"
 
 /*////////////////
 //  Data Types  //
@@ -53,16 +54,26 @@ public:
     void SetExpired(void) { IsExpired = true; }
 
 public:
+    /// @summary Perform initialization when the entity is spawned.
+    /// @param dm The DisplayManager, which can be used to retrieve textures.
+    virtual void Init(DisplayManager *dm) = 0;
+
     /// @summary Executes a single simulation tick for the entity.
     /// @param currentTime The current simulation time, in seconds.
     /// @param elapsedTime The time elapsed since the last simulation tick.
-    virtual void update(double currentTime, double elapsedTime) = 0;
+    virtual void Update(double currentTime, double elapsedTime) = 0;
+
+    /// @summary Handles user input for the entity.
+    /// @param currentTime The current game time, in seconds.
+    /// @param elapsedTime The time elapsed since the previous frame, in seconds.
+    /// @param dm The input manager used to query input device state.
+    virtual void Input(double currentTime, double elapsedTime, InputManager *im);
 
     /// @summary Sets state and submits geometry used for rendering.
     /// @param currentTime The current game time, in seconds.
     /// @param elapsedTime The time elapsed since the previous frame, in seconds.
     /// @param dm The display manager used to submit rendering commands.
-    virtual void draw(double currentTime, double elapsedTime, DisplayManager *dm);
+    virtual void Draw(double currentTime, double elapsedTime, DisplayManager *dm);
 };
 
 #endif /* !defined(GW_ENTITY_HPP) */

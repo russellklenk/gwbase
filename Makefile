@@ -11,7 +11,8 @@ EXE_SRCS    := \
 	src/ll_sprite.cpp \
 	src/display.cpp   \
 	src/input.cpp     \
-	src/entity.cpp
+	src/entity.cpp    \
+	src/player.cpp
 
 EXE_OBJS    := ${EXE_SRCS:.cpp=.o}
 EXE_DEPS    := ${EXE_SRCS:.cpp=.dep}

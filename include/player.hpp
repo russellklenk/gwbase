@@ -18,30 +18,54 @@
 /// @summary Represents a single player entity.
 class Player : public Entity
 {
-public:
-    int player_index;
+protected:
+    DisplayManager *disp;
+    float TargetPoint[2];
+    float TargetVector[2];
+    float CooldownRemaining;
+    float TimeUntilRespawn;
+    float ViewportWidth;
+    float ViewportHeight;
+    float ShipSpeed;
+    int   PlayerIndex;
 
 public:
     Player(int index);
     virtual ~Player(void);
 
 public:
-    /// @summary Processes user input during a single tick.
-    /// @param currentTime The current game time, in seconds.
-    /// @param elapsedTime The time elapsed since the previous frame, in seconds.
-    /// @param im The input manager used to read user input events.
-    virtual void input(double currentTime, double elapsedTime, InputManager *im);
+    /// @summary Retrieve the unique player identifier.
+    /// @return The unique identifier of the player.
+    int  GetIndex(void) const { return PlayerIndex; }
+
+    /// @summary Check whether the player has died.
+    /// @return true if the player is dead or waiting to respawn.
+    bool IsDead(void) const;
+
+    /// @summary Marks the player as being dead.
+    void Kill(void);
+
+public:
+    /// @summary Perform initialization when the entity is spawned.
+    /// @param dm The DisplayManager, which can be used to retrieve textures.
+    virtual void Init(DisplayManager *dm);
 
     /// @summary Executes a single simulation tick for the entity.
     /// @param currentTime The current simulation time, in seconds.
     /// @param elapsedTime The time elapsed since the last simulation tick.
-    virtual void update(double currentTime, double elapsedTime);
+    virtual void Update(double currentTime, double elapsedTime);
+
+    /// @summary Handles user input for the entity.
+    /// @param currentTime The current game time, in seconds.
+    /// @param elapsedTime The time elapsed since the previous frame, in seconds.
+    /// @param dm The input manager used to query input device state.
+    virtual void Input(double currentTime, double elapsedTime, InputManager *im);
 
     /// @summary Sets state and submits geometry used for rendering.
     /// @param currentTime The current game time, in seconds.
     /// @param elapsedTime The time elapsed since the previous frame, in seconds.
     /// @param dm The display manager used to submit rendering commands.
-    virtual void render(double currentTime, double elapsedTime, DisplayManager *dm);
+    virtual void Draw(double currentTime, double elapsedTime, DisplayManager *dm);
 };
 
 #endif /* !defined(GW_PLAYER_HPP) */

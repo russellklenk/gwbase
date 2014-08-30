@@ -27,7 +27,10 @@ Entity::Entity(void) :
     IsExpired(false),
     Kind(ENTITY_DONT_CARE)
 {
-    /* empty */
+    Color[0] = 1.0f;
+    Color[1] = 1.0f;
+    Color[2] = 1.0f;
+    Color[3] = 1.0f;
 }
 
 Entity::~Entity(void)
@@ -35,7 +38,14 @@ Entity::~Entity(void)
     /* empty */
 }
 
-void Entity::draw(double currentTime, double elapsedTime, DisplayManager *dm)
+void Entity::Input(double currentTime, double elapsedTime, InputManager *im)
+{
+    UNUSED_ARG(currentTime);
+    UNUSED_ARG(elapsedTime);
+    UNUSED_ARG(im);
+}
+
+void Entity::Draw(double currentTime, double elapsedTime, DisplayManager *dm)
 {
     UNUSED_ARG(currentTime);
     UNUSED_ARG(elapsedTime);

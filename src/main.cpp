@@ -14,6 +14,7 @@
 #include "math.hpp"
 #include "input.hpp"
 #include "display.hpp"
+#include "player.hpp"
 #include "ll_sprite.hpp"
 #include "ll_shader.hpp"
 
@@ -32,6 +33,7 @@
 ///////////////*/
 static DisplayManager *gDisplayManager = NULL;
 static InputManager   *gInputManager   = NULL;
+static Player         *gPlayer         = NULL;
 
 /*///////////////////////
 //   Local Functions   //
@@ -81,6 +83,7 @@ static void gl_arb_debug(
 static void input(double currentTime, double elapsedTime)
 {
     gInputManager->Update(currentTime, elapsedTime);
+    gPlayer->Input(currentTime, elapsedTime, gInputManager);
 }
 
 /// @summary Executes a single game simulation tick to move all game entities.
@@ -90,8 +93,7 @@ static void input(double currentTime, double elapsedTime)
 /// @param elapsedTime The time elapsed since the previous tick, in seconds.
 static void simulate(double currentTime, double elapsedTime)
 {
-    UNUSED_ARG(currentTime);
-    UNUSED_ARG(elapsedTime);
+    gPlayer->Update(currentTime, elapsedTime);
 }
 
 /// @summary Submits a single frame to the GPU for rendering. Runs once per
@@ -119,6 +121,7 @@ static void render(double currentTime, double elapsedTime, double t, int width, 
     dm->BeginFrame();
     batch->SetBlendModeAlpha();
     font->Draw("Hello, world!", 0, 0, 1, rgba, 5.0f, 5.0f, batch);
+    gPlayer->Draw(currentTime, elapsedTime, dm);
     dm->EndFrame();
 }
 
@@ -187,6 +190,9 @@ int main(int argc, char **argv)
     gDisplayManager->Init(window);
     gInputManager = new InputManager();
     gInputManager->Init(window);
+
+    gPlayer = new Player(0);
+    gPlayer->Init(gDisplayManager);
 
     // game loop setup and run:
     const double   Step = GW_SIM_TIMESTEP;
