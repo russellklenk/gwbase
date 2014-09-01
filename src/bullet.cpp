@@ -41,7 +41,7 @@ Bullet::~Bullet(void)
 void Bullet::Init(DisplayManager *dm)
 {
     Image          = dm->GetBulletTexture();
-    Radius         = max2(Image->GetWidth(), Image->GetHeight());
+    Radius         = max2(float(Image->GetWidth()), float(Image->GetHeight()));
     ViewportWidth  = dm->GetViewportWidth();
     ViewportHeight = dm->GetViewportHeight();
 }

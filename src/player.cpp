@@ -54,7 +54,7 @@ void Player::Kill(void)
 void Player::Init(DisplayManager *dm)
 {
     Image             = dm->GetPlayerTexture();
-    Radius            = max2(Image->GetWidth(), Image->GetHeight());
+    Radius            = max2(float(Image->GetWidth()), float(Image->GetHeight()));
     ShipSpeed         = SHIP_SPEED;
     CooldownRemaining = COOLDOWN_TIME;
     ViewportWidth     = dm->GetViewportWidth();
