@@ -12,6 +12,7 @@ EXE_SRCS    := \
 	src/display.cpp   \
 	src/input.cpp     \
 	src/entity.cpp    \
+	src/bullet.cpp    \
 	src/player.cpp
 
 EXE_OBJS    := ${EXE_SRCS:.cpp=.o}

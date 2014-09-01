@@ -1,5 +1,6 @@
 /*/////////////////////////////////////////////////////////////////////////////
-/// @summary Defines the base class for all game entities.
+/// @summary Defines the base class for all game entities, and the manager used
+/// to reference, update and render them.
 /// @author Russell Klenk (contact@russellklenk.com)
 ///////////////////////////////////////////////////////////////////////////80*/
 
@@ -9,9 +10,16 @@
 /*////////////////
 //   Includes   //
 ////////////////*/
+#include <list>
 #include "common.hpp"
 #include "display.hpp"
 #include "input.hpp"
+
+/*//////////////////////////
+//  Forward Declarations  //
+//////////////////////////*/
+class Bullet;
+class Player;
 
 /*////////////////
 //  Data Types  //
@@ -22,7 +30,8 @@ enum EntityType
     ENTITY_DONT_CARE = 0,
     ENTITY_BULLET    = 1,
     ENTITY_ENEMY     = 2,
-    ENTITY_BLACKHOLE = 3
+    ENTITY_BLACKHOLE = 3,
+    ENTITY_PLAYER    = 4
 };
 
 /// @summary The base class for all game entities.
@@ -74,6 +83,42 @@ public:
     /// @param elapsedTime The time elapsed since the previous frame, in seconds.
     /// @param dm The display manager used to submit rendering commands.
     virtual void Draw(double currentTime, double elapsedTime, DisplayManager *dm);
+};
+
+/// @summary Manages all of the game entities.
+class EntityManager
+{
+private:
+    static EntityManager *EM;
+public:
+    static EntityManager *GetInstance(void);
+
+private:
+    std::list<Entity*> Entities;
+    std::list<Entity*> AddedEntities;
+    std::list<Bullet*> Bullets;
+    std::list<Player*> Players;
+    bool               IsUpdating;
+
+public:
+    EntityManager(void);
+    ~EntityManager(void);
+
+public:
+    size_t  PlayerCount(void) const;
+    size_t  EntityCount(void) const;
+
+public:
+    Player* GetPlayer(int index);
+    void Add(Entity *entity);
+    void AddEntity(Entity *entity);
+    void Update(double currentTime, double elapsedTime);
+    void Input(double currentTime, double elapsedTime, InputManager *im);
+    void Draw(double currentTime, double elapsedTime, DisplayManager *dm);
+
+private:
+    EntityManager(EntityManager const &other);
+    EntityManager& operator =(EntityManager const &other);
 };
 
 #endif /* !defined(GW_ENTITY_HPP) */

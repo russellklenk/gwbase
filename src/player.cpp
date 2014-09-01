@@ -7,7 +7,7 @@
 //   Includes   //
 ////////////////*/
 #include <math.h>
-#include <sstream>
+#include "bullet.hpp"
 #include "player.hpp"
 #include "math.hpp"
 
@@ -33,7 +33,7 @@ Player::Player(int index) :
     ShipSpeed(SHIP_SPEED),
     PlayerIndex(index)
 {
-    /* empty */
+    Kind = ENTITY_PLAYER;
 }
 
 Player::~Player(void)
@@ -53,19 +53,20 @@ void Player::Kill(void)
 
 void Player::Init(DisplayManager *dm)
 {
-    Image           = dm->GetPlayerTexture();
-    Radius          = max2(Image->GetWidth(), Image->GetHeight());
-    ShipSpeed       = SHIP_SPEED;
-    ViewportWidth   = dm->GetViewportWidth();
-    ViewportHeight  = dm->GetViewportHeight();
-    TargetPoint[0]  = ViewportWidth  * 0.5f;
-    TargetPoint[1]  = ViewportHeight * 0.5f;
-    TargetVector[0] = 0.0f;
-    TargetVector[1] = 0.0f;
-    Position[0]     = ViewportWidth  * 0.5f;
-    Position[1]     = ViewportHeight * 0.5f;
-    Velocity[0]     = 0.0f;
-    Velocity[1]     = 0.0f;
+    Image             = dm->GetPlayerTexture();
+    Radius            = max2(Image->GetWidth(), Image->GetHeight());
+    ShipSpeed         = SHIP_SPEED;
+    CooldownRemaining = COOLDOWN_TIME;
+    ViewportWidth     = dm->GetViewportWidth();
+    ViewportHeight    = dm->GetViewportHeight();
+    TargetPoint[0]    = ViewportWidth  * 0.5f;
+    TargetPoint[1]    = ViewportHeight * 0.5f;
+    TargetVector[0]   = 0.0f;
+    TargetVector[1]   = 0.0f;
+    Position[0]       = ViewportWidth  * 0.5f;
+    Position[1]       = ViewportHeight * 0.5f;
+    Velocity[0]       = 0.0f;
+    Velocity[1]       = 0.0f;
 }
 
 void Player::Input(double currentTime, double elapsedTime, InputManager *im)
@@ -100,27 +101,40 @@ void Player::Update(double currentTime, double elapsedTime)
         if (TimeUntilRespawn <= 0.0f)
         {
             // respawn the player.
+            Velocity[0]       = 0.0f;
+            Velocity[1]       = 0.0f;
+            Position[0]       = ViewportWidth  * 0.5f;
+            Position[1]       = ViewportHeight * 0.5f;
             TargetPoint[0]    = ViewportWidth  * 0.5f;
             TargetPoint[1]    = ViewportHeight * 0.5f;
             TargetVector[0]   = 0.0f;
             TargetVector[1]   = 0.0f;
-            Position[0]       = ViewportWidth  * 0.5f;
-            Position[1]       = ViewportHeight * 0.5f;
-            Velocity[0]       = 0.0f;
-            Velocity[1]       = 0.0f;
             TimeUntilRespawn  = 0.0f;
         }
     }
     else
     {
-        if (CooldownRemaining > 0.0f)
-        {
-            CooldownRemaining -= elapsed;
-        }
         Position[0] += Velocity[0];
         Position[1] += Velocity[1];
         Position[0]  = clamp(Position[0], 0, ViewportWidth);
         Position[1]  = clamp(Position[1], 0, ViewportHeight);
+
+        if (CooldownRemaining > 0.0f)
+        {
+            CooldownRemaining -= elapsed;
+        }
+        else
+        {
+            float cos_a = cosf(Orientation);
+            float sin_a = sinf(Orientation);
+            float vel_x = 11.0f * cos_a;
+            float vel_y = 11.0f * sin_a;
+            float pos_x = Position[0];
+            float pos_y = Position[1];
+            Bullet *ent = new Bullet(pos_x, pos_y, vel_x, vel_y);
+            EntityManager::GetInstance()->Add(ent);
+            CooldownRemaining  = COOLDOWN_TIME;
+        }
     }
     UNUSED_LOCAL(current);
 }

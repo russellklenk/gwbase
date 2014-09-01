@@ -6,12 +6,18 @@
 /*////////////////
 //   Includes   //
 ////////////////*/
+#include <stdio.h>
 #include "entity.hpp"
+#include "bullet.hpp"
+#include "player.hpp"
+#include "input.hpp"
 #include "display.hpp"
 
 /*/////////////////
 //   Constants   //
 /////////////////*/
+/// @summary The global EntityManager instance.
+EntityManager* EntityManager::EM = NULL;
 
 /*///////////////////////
 //   Local Functions   //
@@ -59,4 +65,137 @@ void Entity::Draw(double currentTime, double elapsedTime, DisplayManager *dm)
     float  scalex  = 1.0f;
     float  scaley  = 1.0f;
     dm->GetBatch()->Add(1, Image, posx, posy, src, Color, Orientation, originx, originy, scalex, scaley);
+}
+
+EntityManager* EntityManager::GetInstance(void)
+{
+    return EM;
+}
+
+EntityManager::EntityManager(void)
+    :
+    IsUpdating(false)
+{
+    /* empty */
+}
+
+EntityManager::~EntityManager(void)
+{
+    for (std::list<Entity*>::iterator i = Entities.begin(); i != Entities.end(); ++i)
+    {
+        delete *i;
+        *i = NULL;
+    }
+    Entities.clear();
+    AddedEntities.clear();
+    Bullets.clear();
+    Players.clear();
+}
+
+size_t EntityManager::PlayerCount(void) const
+{
+    return Players.size();
+}
+
+size_t EntityManager::EntityCount(void) const
+{
+    return Entities.size();
+}
+
+Player* EntityManager::GetPlayer(int index)
+{
+    std::list<Player*>::iterator iter = Players.begin();
+    while (iter != Players.end())
+    {
+        if ((*iter)->GetIndex() == index)
+            return *iter;
+        ++iter;
+    }
+    return NULL;
+}
+
+void EntityManager::Add(Entity *entity)
+{
+    if (IsUpdating == false)
+    {
+        AddEntity(entity);
+    }
+    else AddedEntities.push_back(entity);
+}
+
+void EntityManager::AddEntity(Entity *entity)
+{
+    Entities.push_back(entity);
+    switch (entity->GetKind())
+    {
+        case ENTITY_BULLET:
+            Bullets.push_back((Bullet*) entity);
+            break;
+
+        case ENTITY_ENEMY:
+            break;
+
+        case ENTITY_BLACKHOLE:
+            break;
+
+        case ENTITY_PLAYER:
+            Players.push_back((Player*) entity);
+            break;
+
+        default:
+            break;
+    }
+}
+
+void EntityManager::Update(double currentTime, double elapsedTime)
+{
+    printf("EntityManager: Begin update\n");
+    IsUpdating = true;
+    for (std::list<Entity*>::iterator i = Entities.begin(); i != Entities.end(); ++i)
+    {
+        (*i)->Update(currentTime, elapsedTime);
+        if ((*i)->GetExpired())
+            *i = NULL;
+    }
+    IsUpdating = false;
+
+    // add entities created during the update:
+    for (std::list<Entity*>::iterator i = AddedEntities.begin(); i != AddedEntities.end(); ++i)
+    {
+        AddEntity(*i);
+    }
+    AddedEntities.clear();
+    Entities.remove(NULL);
+
+    // prune bullet objects.
+    for (std::list<Bullet*>::iterator i = Bullets.begin(); i != Bullets.end(); ++i)
+    {
+        if ((*i)->GetExpired())
+        {
+            delete *i;
+            *i = NULL;
+        }
+    }
+    Bullets.remove(NULL);
+    printf("EntityManager: End update\n");
+}
+
+void EntityManager::Input(double currentTime, double elapsedTime, InputManager *im)
+{
+    printf("EntityManager: Begin input\n");
+    for (std::list<Entity*>::iterator i = Entities.begin(); i != Entities.end(); ++i)
+    {
+        (*i)->Input(currentTime, elapsedTime, im);
+    }
+    printf("EntityManager: End input\n");
+}
+
+void EntityManager::Draw(double currentTime, double elapsedTime, DisplayManager *dm)
+{
+    printf("EntityManager: Begin draw\n");
+    for (std::list<Entity*>::iterator i = Entities.begin(); i != Entities.end(); ++i)
+    {
+        (*i)->Draw(currentTime, elapsedTime, dm);
+    }
+    printf("EntityManager: End draw\n");
 }
