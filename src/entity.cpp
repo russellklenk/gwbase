@@ -125,6 +125,7 @@ void EntityManager::Add(Entity *entity)
 
 void EntityManager::AddEntity(Entity *entity)
 {
+    entity->Init(DisplayManager::GetInstance());
     Entities.push_back(entity);
     switch (entity->GetKind())
     {
@@ -149,7 +150,6 @@ void EntityManager::AddEntity(Entity *entity)
 
 void EntityManager::Update(double currentTime, double elapsedTime)
 {
-    printf("EntityManager: Begin update\n");
     IsUpdating = true;
     for (std::list<Entity*>::iterator i = Entities.begin(); i != Entities.end(); ++i)
     {
@@ -177,25 +177,20 @@ void EntityManager::Update(double currentTime, double elapsedTime)
         }
     }
     Bullets.remove(NULL);
-    printf("EntityManager: End update\n");
 }
 
 void EntityManager::Input(double currentTime, double elapsedTime, InputManager *im)
 {
-    printf("EntityManager: Begin input\n");
     for (std::list<Entity*>::iterator i = Entities.begin(); i != Entities.end(); ++i)
     {
         (*i)->Input(currentTime, elapsedTime, im);
     }
-    printf("EntityManager: End input\n");
 }
 
 void EntityManager::Draw(double currentTime, double elapsedTime, DisplayManager *dm)
 {
-    printf("EntityManager: Begin draw\n");
     for (std::list<Entity*>::iterator i = Entities.begin(); i != Entities.end(); ++i)
     {
         (*i)->Draw(currentTime, elapsedTime, dm);
     }
-    printf("EntityManager: End draw\n");
 }
