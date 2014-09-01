@@ -271,6 +271,11 @@ public:
 class DisplayManager
 {
 private:
+    static DisplayManager *DM;
+public:
+    static DisplayManager* GetInstance(void);
+
+private:
     GLFWwindow  *MainWindow;
     float        ViewportWidth;
     float        ViewportHeight;

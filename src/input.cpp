@@ -12,6 +12,8 @@
 /*/////////////////
 //   Constants   //
 /////////////////*/
+/// @summary The global InputManager instance.
+InputManager* InputManager::IM = NULL;
 
 /*///////////////////////
 //   Local Functions   //
@@ -29,6 +31,11 @@ static uint32_t controller_bitmap(input_snapshot_t const *state)
 /*///////////////////////
 //  Public Functions   //
 ///////////////////////*/
+InputManager* InputManager::GetInstance(void)
+{
+    return IM;
+}
+
 InputManager::InputManager(void)
     :
     MainWindow(NULL),
@@ -37,12 +44,13 @@ InputManager::InputManager(void)
     MouseDeltaX(0.0f),
     MouseDeltaY(0.0f)
 {
-    /* empty */
+    InputManager::IM = this;
 }
 
 InputManager::~InputManager(void)
 {
     Shutdown();
+    InputManager::IM = NULL;
 }
 
 

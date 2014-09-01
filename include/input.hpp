@@ -32,6 +32,11 @@ struct controller_state_t
 class InputManager
 {
 private:
+    static InputManager *IM;
+public:
+    static InputManager *GetInstance(void);
+
+private:
     GLFWwindow       *MainWindow;       /// The window to which we're attached.
     input_snapshot_t  CurrentState;     /// Input state for the current tick.
     input_snapshot_t  PreviousState;    /// Input state from the previous tick.

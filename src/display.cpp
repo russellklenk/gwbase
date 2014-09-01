@@ -40,6 +40,9 @@ static char const *SpriteBatch_FSS =
     "    oCLR = texture(sTEX, vTEX) * vCLR;\n"
     "}\n";
 
+/// @summary The global DisplayManager instance.
+DisplayManager* DisplayManager::DM = NULL;
+
 /*///////////////////////
 //   Local Functions   //
 ///////////////////////*/
@@ -455,6 +458,11 @@ void SpriteFont::Draw(std::string const &str, float x, float y, uint32_t z, floa
     }
 }
 
+DisplayManager* DisplayManager::GetInstance(void)
+{
+    return DM;
+}
+
 DisplayManager::DisplayManager(void)
     :
     MainWindow(NULL),
@@ -473,12 +481,13 @@ DisplayManager::DisplayManager(void)
     SeekerTexture(NULL),
     WandererTexture(NULL)
 {
-    /* empty */
+    DisplayManager::DM = this;
 }
 
 DisplayManager::~DisplayManager(void)
 {
     Shutdown();
+    DisplayManager::DM = NULL;
 }
 
 
