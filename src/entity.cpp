@@ -76,7 +76,7 @@ EntityManager::EntityManager(void)
     :
     IsUpdating(false)
 {
-    /* empty */
+    EntityManager::EM = this;
 }
 
 EntityManager::~EntityManager(void)
